@@ -19,5 +19,3 @@ class StoreProduct(Basemodel, Base):
     store: Mapped["Store"] = relationship(back_populates="products")
     product: Mapped["Product"] = relationship(back_populates="stores")
 
-
-
