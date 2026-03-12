@@ -1,8 +1,11 @@
-from src.models.base import Basemodel, Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from src.models.user_products import UserProducts
-from src.models.price_alert import PriceAlert
-from models.store_product import StoreProduct
+from typing import TYPE_CHECKING
+from src.models.base import Basemodel, Base
+# from src.models.user_products import UserProducts
+
+if TYPE_CHECKING:
+    from src.models.price_alert import PriceAlert
+    from models.store_product import StoreProduct
 
 class Product(Basemodel, Base):
     __tablename__="products"
@@ -20,4 +23,4 @@ class Product(Basemodel, Base):
         cascade="all, delete-orphan"
     )
 
-    store: Mapped[list["StoreProduct"]] = relationship(back_populates="product", cascade="all, delete-orphan")
+    stores: Mapped[list["StoreProduct"]] = relationship(back_populates="product", cascade="all, delete-orphan")

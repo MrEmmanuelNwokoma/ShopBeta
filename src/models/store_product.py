@@ -1,14 +1,19 @@
-from src.models.base import Basemodel, Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import ForeignKey
+from typing import TYPE_CHECKING
+from src.models.base import Basemodel, Base
 from sqlalchemy import String
-from src.models.store import Store
-from src.models.product import Product
+
+if TYPE_CHECKING:
+    from src.models.store import Store
+    from src.models.product import Product
 
 
 class StoreProduct(Basemodel, Base):
-    __tablename__="prices"
+    __tablename__="store_products"
 
-
+    store_id: Mapped[str] = mapped_column(ForeignKey("stores.id"), nullable=False)
+    product_id: Mapped[str] = mapped_column(ForeignKey("products.id"), nullable=False)
     price: Mapped[str] = mapped_column(nullable=False)
     currency: Mapped[str] = mapped_column(String(3), nullable=False)
 

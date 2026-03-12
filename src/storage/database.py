@@ -15,7 +15,7 @@ class Database:
         async with self.__session_maker() as session:
             yield session
 
-    async def cerate_tables(self):
+    async def create_tables(self):
         async with self.__engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
     
