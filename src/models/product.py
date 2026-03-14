@@ -14,6 +14,7 @@ class Product(Basemodel, Base):
     brand: Mapped[str] = mapped_column(nullable=False)
     description: Mapped[str] = mapped_column(nullable=False)
     product_url: Mapped[str] = mapped_column(nullable=False)
+    is_deleted: Mapped[bool] = mapped_column(nullable=False, default=False)
 
 
 

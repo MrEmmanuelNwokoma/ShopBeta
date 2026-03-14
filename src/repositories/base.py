@@ -17,6 +17,10 @@ class BaseRepository(Generic[ModelType]):
         self.session.add(obj)
         return obj
     
+    async def bulk_create(self, objs: list[ModelType]):
+        self.session.add_all(objs)
+        return objs
+    
     async def get_all(self):
         stmt = select(self.model)
 
@@ -30,10 +34,27 @@ class BaseRepository(Generic[ModelType]):
         result = await self.session.execute(select(self.model).where(self.model.email == email))
         return result.scalar_one_or_none()
 
-    async def get_by_id(self, id: str):
-        result = await self.session.get(self.model, id)
-        return result
+    # async def get_by_id(self, id: str):
+    #     stmt = select(self.model).where(self.model.id == id)
+    #     if hasattr(self.model, "is_deleted"):
+    #         stmt = stmt.where(self.model.is_deleted.is_(False))
 
+    #     result = await self.session.execute(stmt)
+    #     return result.scalar_one_or_none()
+    
+    async def get_by_id(self, id: str):
+        stmt = select(self.model).where(self.model.id == id)
+
+        if hasattr(self.model, "is_deleted"):
+            stmt = stmt.where(self.model.is_deleted.is_(False))
+        
+        if hasattr(self.model, "is_active"):
+            stmt = stmt.where(self.model.is_active.is_(True))
+
+        result = await self.session.scalar(stmt)
+        return result
+    
+ 
     async def delete(self, id, soft: bool =False)-> bool:
         obj = await self.get_by_id(id)
         if not obj:

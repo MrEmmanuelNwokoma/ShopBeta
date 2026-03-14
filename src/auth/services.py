@@ -4,7 +4,7 @@ from phonenumbers.phonenumberutil import NumberParseException
 from src.models.user import User
 from src.schemas.user_schema import CreateUserSchema, ReadUser, LoginUser
 from src.unit_of_work.unit_of_work import UnitOfWork
-from src.core.exceptions import UserAlreadyExistsError, InvalidCredentialsError, UserNotFound, InvalidResetTokenError
+from src.core.exceptions import UserAlreadyExistsError, InvalidCredentialsError, EntityNotFound, InvalidResetTokenError
 from src.auth.security import verify_password, hash_password
 from src.auth.jwt import retrieve_token
 from src.auth.schema import TokenResponse
@@ -58,7 +58,7 @@ class AuthService:
                         }
                     ) from exc
             if not user:
-                raise UserNotFound(
+                raise EntityNotFound(
                     message="User not found",
                     details={
                         "recommendation": "Pass the correct credentials"

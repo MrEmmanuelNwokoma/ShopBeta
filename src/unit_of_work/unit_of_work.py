@@ -10,6 +10,7 @@ class UnitOfWork:
 
         self.user_repo = UserRepository(session)
         self.store_repo = StoreRepository(session)
+        self.product_repo = ProductRepository(session)
   
 
     

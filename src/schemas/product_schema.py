@@ -1,7 +1,7 @@
 """
 Pydantic schema for validation
 """
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, HttpUrl, ConfigDict
 
 
 
@@ -17,7 +17,8 @@ class CreateProduct(BaseProduct):
     
 class ReadProduct(BaseProduct):
     """Schema for reading product"""
-    id: str
+
+    model_config  = ConfigDict(from_attributes=True)
 
 class UpdateProduct(BaseProduct):
     """Schema for updating store"""

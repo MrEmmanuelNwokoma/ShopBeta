@@ -15,9 +15,10 @@ class UserAlreadyExistsError(ShopBeta):
     def __init__(self, message="user already exist", details=None):
         super().__init__(message=message, details=details)
 
-class UserNotFound(ShopBeta):
-    """Rasied when a user is not found in dataase"""
-    def __init__(self, message="service provider not found", details=None):
+    
+class EntityNotFound(ShopBeta):
+    """Rasied when an entity is not found in dataase"""
+    def __init__(self, message="entity not found", details=None):
         super().__init__(message=message, details=details)
 
 class PermissionDenied(ShopBeta):
