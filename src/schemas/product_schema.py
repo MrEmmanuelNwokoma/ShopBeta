@@ -10,7 +10,7 @@ class BaseProduct(BaseModel):
     name: str
     brand: str
     description: str
-    product_url: HttpUrl
+    
 
 class CreateProduct(BaseProduct):
     """Schema for creating a product"""
@@ -22,3 +22,4 @@ class ReadProduct(BaseProduct):
 
 class UpdateProduct(BaseProduct):
     """Schema for updating store"""
+    

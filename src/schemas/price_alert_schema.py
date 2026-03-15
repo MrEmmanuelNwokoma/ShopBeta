@@ -2,7 +2,7 @@
 Pydantic schema for validation
 """
 from pydantic import BaseModel
-from src.model_schemas.store_product import ReadStoreProduct
+from src.schemas.store_product import ReadStoreProduct
 
 
 

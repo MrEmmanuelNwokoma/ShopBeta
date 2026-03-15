@@ -1,21 +1,25 @@
 """
 Pydantic schemas for validation
 """
-from pydantic import BaseModel
-from src.model_schemas.product_schema import ReadProduct
-from src.model_schemas.store_schema import ReadStore
+from pydantic import BaseModel, ConfigDict
+from src.schemas.product_schema import ReadProduct
+from src.schemas.store_schema import ReadStore
 
 
 class BaseStoreProduct(BaseModel):
     """Base store_product schema """
     price: str
-    instock: str
+    instock: bool
+    currency: str
 
 
 class ReadStoreProduct(BaseStoreProduct):
     """Schema for reading store_product"""
     store: ReadStore
     product: ReadProduct
+
+    model_config = ConfigDict(from_attributes=True)
+
 
 class CreateStoreProduct(BaseStoreProduct):
     """Schema for creating store_product relationship"""

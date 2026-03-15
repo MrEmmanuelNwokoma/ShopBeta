@@ -38,7 +38,11 @@ class StoreService:
     async def get_single_store(self, store_id: str):
         async with self.uow_factory:
             store = await self.uow_factory.store_repo.get_by_id(store_id)
-        return ReadStore.model_validate(store)
+        return {
+            "status": "success",
+            "message": "Store successfully retrieved",
+            "data": ReadStore.model_validate(store)
+        }
     
 
     async def update_store(self, current_user: str, store_id: str, store_data: UpdateStore):
@@ -58,13 +62,17 @@ class StoreService:
         }
     
     async def deactivate_store(self, current_user: str, store_id: str):
-        if current_user.role != UserRole.ADMIN:
-            raise PermissionDenied(
-                details={
-                    "recommendations": "Make sure you are an admin"
-                }
-            )
         async with self.uow_factory:
-            store = await self.uow_factory.store_repo.delete(store_id, soft=True)
-            return store
+            if current_user.role != UserRole.ADMIN:
+                raise PermissionDenied(
+                    details={
+                        "recommendations": "Make sure you are an admin"
+                    }
+                )
+            
+            await self.uow_factory.store_repo.delete(store_id, soft=True)
+        return {
+            "status": "success",
+            "message": "Store successfully deactivated",
+        }
     

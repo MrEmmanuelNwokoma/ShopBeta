@@ -13,7 +13,6 @@ class Product(Basemodel, Base):
     name: Mapped[str] = mapped_column(nullable=False)
     brand: Mapped[str] = mapped_column(nullable=False)
     description: Mapped[str] = mapped_column(nullable=False)
-    product_url: Mapped[str] = mapped_column(nullable=False)
     is_deleted: Mapped[bool] = mapped_column(nullable=False, default=False)
 
 

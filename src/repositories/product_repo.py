@@ -17,7 +17,7 @@ class ProductRepository(BaseRepository[Product]):
     
     async def create_product(self, product_data: CreateProduct):
         data = product_data.model_dump()
-        data["product_url"] = str(data["product_url"])
+        
         product = Product(**data)
         new_product = await self.create(product)
         return new_product

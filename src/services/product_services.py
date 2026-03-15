@@ -48,22 +48,23 @@ class ProductService:
 
 
     async def update_product(self, current_user: str, product_id: str, product_data: UpdateProduct):
-        if current_user.role != UserRole.ADMIN:
-            raise PermissionDenied(
-                message="You do not have permission to update product",
-                details={
-                    "recommendation": "Make sure user is an admin"
-                }
-            )
-        product = await self.uow_factory.product_repo.get_by_id(product_id)
-        if not product:
-            raise EntityNotFound(
-                message="Product not found",
-                details={
-                    "recommendation": "Make sure you pass the right product_id"
-                }
-            )
         async with self.uow_factory:
+            if current_user.role != UserRole.ADMIN:
+                raise PermissionDenied(
+                    message="You do not have permission to update product",
+                    details={
+                        "recommendation": "Make sure user is an admin"
+                    }
+                )
+            product = await self.uow_factory.product_repo.get_by_id(product_id)
+            if not product:
+                raise EntityNotFound(
+                    message="Product not found",
+                    details={
+                        "recommendation": "Make sure you pass the right product_id"
+                    }
+                )
+            
             updated_product = await self.uow_factory.product_repo.update_product(product_id, product_data)
         return {
             "status": "success",
@@ -73,15 +74,17 @@ class ProductService:
     
     
     async def delete_product(self, product_id: str):
-        product = await self.uow_factory.product_repo.get_by_id(product_id)
-        if not product:
-            raise EntityNotFound(
-                message="Product not found",
-                details={
-                    "recommendation": "Make sure you pass the right product_id"
-                }
-            )
         async with self.uow_factory:
+            product = await self.uow_factory.product_repo.get_by_id(product_id)
+        
+            if not product:
+                raise EntityNotFound(
+                    message="Product not found",
+                    details={
+                        "recommendation": "Make sure you pass the right product_id"
+                    }
+                )
+        
             await self.uow_factory.product_repo.delete(product_id, soft=True)
 
         return {
@@ -90,16 +93,17 @@ class ProductService:
         }
     
     async def bulk_delete_products(self, products_id: list[str]):
-        products = await self.uow_factory.product_repo.get_multiple_products(products_id)
-        if not products:
-            raise EntityNotFound(
-                message="Product not found",
-                details={
-                    "recommendation": "Make sure you pass the right product_id"
-                }
-            )
         async with self.uow_factory:
-           deleted_products = await self.uow_factory.product_repo.bulk_delete_products(products_id)
+            products = await self.uow_factory.product_repo.get_multiple_products(products_id)
+            if not products:
+                raise EntityNotFound(
+                    message="Product not found",
+                    details={
+                        "recommendation": "Make sure you pass the right product_id"
+                    }
+                )
+            
+            deleted_products = await self.uow_factory.product_repo.bulk_delete_products(products_id)
         return {
             "status": "success",
             "message": "Products successfully deleted",
@@ -107,3 +111,5 @@ class ProductService:
         }
         
     
+
+

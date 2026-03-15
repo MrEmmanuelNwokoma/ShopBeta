@@ -6,6 +6,8 @@ from src.auth.services import AuthService
 from src.services.user_services import UserService
 from src.services.store_services import StoreService
 from src.services.product_services import ProductService
+from src.services.price_history_service import PriceHistoryService
+from src.services.store_product_services import StoreProductService
 from src.auth.jwt import decode_access_token
 from src.schemas.user_schema import UserProfile
 from src.storage import db
@@ -32,6 +34,12 @@ def get_store_service(uow: UnitOfWork = Depends(get_uow)):
 
 def get_product_service(uow: UnitOfWork = Depends(get_uow)):
     return ProductService(uow)
+
+def get_store_product_service(uow: UnitOfWork = Depends(get_uow)):
+    return StoreProductService(uow)
+
+def get_price_history_service(uow: UnitOfWork = Depends(get_uow)):
+    return PriceHistoryService(uow)
 
 async def get_current_user(
     token: str = Depends(oauth2_scheme),

@@ -8,7 +8,8 @@ class Store(Basemodel, Base):
     name: Mapped[str] = mapped_column(nullable=False)
     supports_api: Mapped[bool] = mapped_column(nullable=False, default=False)
     website_url: Mapped[str] = mapped_column(nullable=False, unique=True)
-    is_active: Mapped[bool] = mapped_column(nullable=False, default=False)
+    is_active: Mapped[bool] = mapped_column(nullable=False, default=True)
+    is_deleted: Mapped[bool] = mapped_column(nullable=False, default=False)
 
 
 

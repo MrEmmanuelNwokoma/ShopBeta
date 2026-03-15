@@ -6,7 +6,7 @@ from src.models.base import Base
 
 
 class Database:
-    def __init__(self, db_url: str = "sqlite+aiosqlite:///test.db"):
+    def __init__(self, db_url: str = "sqlite+aiosqlite:///my_database.db"):
         self.__engine = create_async_engine(db_url, echo=False)
         self.__session_maker = async_sessionmaker(self.__engine, expire_on_commit=False)
 

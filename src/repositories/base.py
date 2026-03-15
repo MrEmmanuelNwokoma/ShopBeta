@@ -15,6 +15,7 @@ class BaseRepository(Generic[ModelType]):
     
     async def create(self, obj: ModelType):
         self.session.add(obj)
+        await self.session.flush()
         return obj
     
     async def bulk_create(self, objs: list[ModelType]):

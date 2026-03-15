@@ -8,7 +8,7 @@ class BaseStore(BaseModel):
     """Parent store schema which other store schemas inherit"""
     name: str
     website_url: AnyHttpUrl
-    is_active: bool = False
+    is_active: bool = True
     supports_api: bool = False
 
 
