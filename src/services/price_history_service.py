@@ -8,5 +8,15 @@ class PriceHistoryService:
     
     async def get_store_product_price_history(self, store_product_id: str):
         async with self.uow_factory:
+            store_product = await self.uow_factory.store_product_repo.get_by_id(store_product_id)
+            if not store_product:
+                raise EntityNotFound(
+                    message="Store product not found",
+                    details={"recommendation": "Pass a valid store_product_id"}
+                )
             price_history = await self.uow_factory.price_history_repo.get_store_product_price_history(store_product_id)
+            if not price_history:
+                return []
         return ReadPriceHistory.model_validate(price_history)
+    
+    

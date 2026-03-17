@@ -40,6 +40,15 @@ async def get_single_product(
     response = await product_service.get_single_product(product_id)
     return response
 
+@product_router.get("/{category_id}/products")
+async def get_product_by_category(
+    category_id: str,
+    product_service: ProductService = Depends(get_product_service)
+):
+    response = await product_service.get_products_by_category(category_id)
+    return response
+
+
 
 
 @product_router.patch("/{product_id}")

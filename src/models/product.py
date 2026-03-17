@@ -1,15 +1,19 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import ForeignKey
 from typing import TYPE_CHECKING
 from src.models.base import Basemodel, Base
-# from src.models.user_products import UserProducts
+
+
 
 if TYPE_CHECKING:
-    from src.models.price_alert import PriceAlert
     from models.store_product import StoreProduct
+    from src.models.category import Category
+    from src.models.product_image import ProductImage
 
 class Product(Basemodel, Base):
     __tablename__="products"
-
+    
+    category_id: Mapped[str] = mapped_column(ForeignKey("categories.id"))
     name: Mapped[str] = mapped_column(nullable=False)
     brand: Mapped[str] = mapped_column(nullable=False)
     description: Mapped[str] = mapped_column(nullable=False)
@@ -18,9 +22,7 @@ class Product(Basemodel, Base):
 
 
     #relationships
-    users: Mapped[list["PriceAlert"]] = relationship(
-        back_populates="product",
-        cascade="all, delete-orphan"
-    )
-
+    category: Mapped["Category"] = relationship(back_populates="products")
     stores: Mapped[list["StoreProduct"]] = relationship(back_populates="product", cascade="all, delete-orphan")
+    product_images: Mapped["ProductImage"] = relationship(back_populates="product", cascade="all, delete-orphan")
+    

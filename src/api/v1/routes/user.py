@@ -23,4 +23,12 @@ async def update_user_profile(
     response = await user_service.update_user(user_data, user_id=current_user.id)
     return response
 
+@user_router.get("/me/price-alerts")
+async def get_user_price_alerts(
+    user: User = Depends(get_current_user),
+    user_service: UserService = Depends(get_user_service)
+):
+    response = await user_service.get_user_price_alerts(user_id=user.id)
+    return response
+    
     

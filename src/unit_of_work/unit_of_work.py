@@ -4,6 +4,8 @@ from src.repositories.store_product_repo import StoreProductRepository
 from src.repositories.product_repo import ProductRepository
 from src.repositories.user_repo import UserRepository
 from src.repositories.price_histories_repo import PriceHistoryRepository
+from src.repositories.price_alert_repo import PriceAlertRepository
+from src.repositories.category_repo import CategoryRepository
 
 
 class UnitOfWork:
@@ -15,6 +17,8 @@ class UnitOfWork:
         self.product_repo = ProductRepository(session)
         self.store_product_repo = StoreProductRepository(session)
         self.price_history_repo = PriceHistoryRepository(session)
+        self.price_alert_repo = PriceAlertRepository(session)
+        self.category_repo = CategoryRepository(session)
   
 
     

@@ -15,7 +15,11 @@ class UserAlreadyExistsError(ShopBeta):
     def __init__(self, message="user already exist", details=None):
         super().__init__(message=message, details=details)
 
-    
+class EntityAlreadyExist(ShopBeta):
+    """Rasied when trying to create an entity that already exists."""
+    def __init__(self, message="entity already exist", details=None):
+        super().__init__(message=message, details=details)
+
 class EntityNotFound(ShopBeta):
     """Rasied when an entity is not found in dataase"""
     def __init__(self, message="entity not found", details=None):

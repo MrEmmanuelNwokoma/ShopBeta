@@ -11,9 +11,11 @@ class BaseProduct(BaseModel):
     brand: str
     description: str
     
+    
 
 class CreateProduct(BaseProduct):
     """Schema for creating a product"""
+    category_id: str
     
 class ReadProduct(BaseProduct):
     """Schema for reading product"""
