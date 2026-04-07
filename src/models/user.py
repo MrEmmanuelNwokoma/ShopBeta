@@ -2,9 +2,15 @@ from src.models.base import Basemodel, Base
 from datetime import datetime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Enum, DateTime
+from typing import TYPE_CHECKING
 from src.models.price_alert import PriceAlert
+from src.models.favorites import Favorite
+
 from src.enums.enums import UserRole
 
+if TYPE_CHECKING:
+    from src.models.notification import Notification
+    from src.models.notification_recipient import NotificationRecipient
 
 class User(Basemodel, Base):
     __tablename__="users"
@@ -28,4 +34,10 @@ class User(Basemodel, Base):
         back_populates="user",
         cascade="all, delete-orphan"
     )
+    
+    favorites: Mapped[list["Favorite"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+
+    sent_notifications: Mapped[list["Notification"]] = relationship(back_populates="sender")
+
+    notification_recipients: Mapped[list["NotificationRecipient"]] = relationship(back_populates="user")
     

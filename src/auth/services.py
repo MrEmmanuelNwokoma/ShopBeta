@@ -82,7 +82,7 @@ class AuthService:
             token_utils = TokenUtils(self.uow_factory)
             user = await self.uow_factory.user_repo.get_user_by_email(email)
             if not user:
-                raise UserNotFound(
+                raise EntityNotFound(
                     message="User with the provided email does not exist",
                     details={
                         "recommendations": "Ensure user passes the correct email"
@@ -102,7 +102,7 @@ class AuthService:
        async with self.uow_factory:
             user = await self.uow_factory.user_repo.verify_token(token)
             if not user:
-                raise UserNotFound(
+                raise EntityNotFound(
                     message="User not found",
                     details={
                         "recommendation": "Pass the correct token"
@@ -133,7 +133,7 @@ class AuthService:
     async def change_password(self, user_id: str, new_password: str):
         user = await self.uow_factory.user_repo.get_by_id(user_id)
         if not user:
-            raise UserNotFound(
+            raise EntityNotFound(
                 message="User not found",
                 details={
                     "recommendation": "Pass the correct user_id"

@@ -9,6 +9,7 @@ if TYPE_CHECKING:
     from src.models.product import Product
     from src.models.price_alert import PriceAlert
     from src.models.price_history import PriceHistory
+    from src.models.favorites import Favorite
 
 
 class StoreProduct(Basemodel, Base):
@@ -26,4 +27,4 @@ class StoreProduct(Basemodel, Base):
     price_alerts: Mapped[list["PriceAlert"]] = relationship(back_populates="store_product", cascade="all, delete-orphan")
     product: Mapped["Product"] = relationship(back_populates="stores")
     price_histories: Mapped[list["PriceHistory"]] = relationship(back_populates="store_product", cascade="all, delete-orphan")
-
+    favorites: Mapped[list["Favorite"]] = relationship(back_populates="store_product", cascade="all, delete-orphan")

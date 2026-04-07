@@ -17,6 +17,4 @@ class PriceHistoryService:
             price_history = await self.uow_factory.price_history_repo.get_store_product_price_history(store_product_id)
             if not price_history:
                 return []
-        return ReadPriceHistory.model_validate(price_history)
-    
-    
+            return ReadPriceHistory.model_validate(price_history)

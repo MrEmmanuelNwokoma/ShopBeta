@@ -18,6 +18,7 @@ class CreateProduct(BaseProduct):
     category_id: str
     
 class ReadProduct(BaseProduct):
+    id: str
     """Schema for reading product"""
 
     model_config  = ConfigDict(from_attributes=True)

@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends
 from src.models.user import User
-from src.api.v1.dependencies import get_current_user, get_user_service
+from src.api.v1.dependencies import get_current_user, get_user_service, get_favorite_service
 from src.services.user_services import UserService
+from src.services.favorite_services import FavoriteService
 from src.schemas.user_schema import UpdateUser
 
 
@@ -31,4 +32,12 @@ async def get_user_price_alerts(
     response = await user_service.get_user_price_alerts(user_id=user.id)
     return response
     
+
+@user_router.get("/me/favorites")
+async def get_user_favorites(
+    user: User = Depends(get_current_user),
+    user_service: UserService = Depends(get_favorite_service)
+):
+    response = await user_service.get_user_favorites(user_id=user.id)
+    return response
     

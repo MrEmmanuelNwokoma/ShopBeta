@@ -18,32 +18,32 @@ class StoreService:
             )
         async with self.uow_factory:
             new_store = await self.uow_factory.store_repo.create_store(store_data)
-        return {
-            "status": "success",
-            "message": "Store successfully created",
-            "data": ReadStore.model_validate(new_store)
-        }
+            return {
+                "status": "success",
+                "message": "Store successfully created",
+                "data": ReadStore.model_validate(new_store)
+            }
 
 
     async def get_all_stores(self):
         async with self.uow_factory:
             stores = await self.uow_factory.store_repo.get_all()
 
-        return {
-            "status": "success",
-            "message": "Stores successfully retrieved",
-            "data": [ReadStore.model_validate(store) for store in stores]
-        }
+            return {
+                "status": "success",
+                "message": "Stores successfully retrieved",
+                "data": [ReadStore.model_validate(store) for store in stores]
+            }
     
-    
+        ReadStore.model_validate(store)
     async def get_single_store(self, store_id: str):
         async with self.uow_factory:
             store = await self.uow_factory.store_repo.get_by_id(store_id)
-        return {
-            "status": "success",
-            "message": "Store successfully retrieved",
-            "data": ReadStore.model_validate(store)
-        }
+            return {
+                "status": "success",
+                "message": "Store successfully retrieved",
+                "data": ReadStore.model_validate(store)
+            }
     
 
     async def update_store(self, current_user: User, store_id: str, store_data: UpdateStore):
@@ -56,11 +56,11 @@ class StoreService:
         async with self.uow_factory:
             updated_store = await self.uow_factory.store_repo.update_store(store_id, store_data)
 
-        return {
-            "status": "success",
-            "message": "Store successfully updated",
-            "data": ReadStore.model_validate(updated_store)
-        }
+            return {
+                "status": "success",
+                "message": "Store successfully updated",
+                "data": ReadStore.model_validate(updated_store)
+            }
     
     async def deactivate_store(self, current_user: User, store_id: str):
         async with self.uow_factory:
@@ -72,8 +72,8 @@ class StoreService:
                 )
             
             await self.uow_factory.store_repo.delete(store_id, soft=True)
-        return {
-            "status": "success",
-            "message": "Store successfully deactivated",
-        }
+            return {
+                "status": "success",
+                "message": "Store successfully deactivated",
+            }
     

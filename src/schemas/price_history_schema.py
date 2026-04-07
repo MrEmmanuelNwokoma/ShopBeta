@@ -2,10 +2,10 @@ from pydantic import BaseModel, ConfigDict
 
 class BasePriceHistory(BaseModel):
     price: float
-
+    store_product_id: str
 
 class CreatePriceHistory(BasePriceHistory):
-    store_product_id: str
+    """Create price history"""
 
     @classmethod
     def from_store_product(cls, new_store_product):

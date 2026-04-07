@@ -57,6 +57,11 @@ class UserService:
                     store_name=store_name,
                     target_price=price_alert.target_price
                 ))
-        return result
+            return result
+    
+    async def get_user_favorites(self, user_id: str):
+        async with self.uow_factory:
+            user_favorites = await self.uow_factory.favorite_repo.get_user_favorites(user_id)
+            return user_favorites
     
     

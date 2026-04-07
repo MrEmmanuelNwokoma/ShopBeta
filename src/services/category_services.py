@@ -10,6 +10,6 @@ class CategoryService:
             categories = await self.uow_factory.category_repo.get_categories()
             if not categories:
                 return []
-        return categories
+            return categories
     
     

@@ -6,6 +6,7 @@ from src.repositories.user_repo import UserRepository
 from src.repositories.price_histories_repo import PriceHistoryRepository
 from src.repositories.price_alert_repo import PriceAlertRepository
 from src.repositories.category_repo import CategoryRepository
+from src.repositories.favorites_repo import FavoriteRepository
 
 
 class UnitOfWork:
@@ -19,6 +20,8 @@ class UnitOfWork:
         self.price_history_repo = PriceHistoryRepository(session)
         self.price_alert_repo = PriceAlertRepository(session)
         self.category_repo = CategoryRepository(session)
+        self.favorite_repo = FavoriteRepository(session)
+        
   
 
     

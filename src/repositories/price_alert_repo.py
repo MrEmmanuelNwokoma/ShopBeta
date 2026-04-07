@@ -3,14 +3,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from src.repositories.base import BaseRepository
 from src.models.price_alert import PriceAlert
-from src.schemas.price_alert_schema import PriceAlert
+from src.schemas.price_alert_schema import PriceAlertSchema
 
 
 class PriceAlertRepository(BaseRepository[PriceAlert]):
     def __init__(self, session: AsyncSession):
         super().__init__(PriceAlert, session)
 
-    async def create_price_alert(self, price_alert_data: PriceAlert):
+    async def create_price_alert(self, price_alert_data: PriceAlertSchema):
         data = price_alert_data.model_dump()
         price__alert = PriceAlert(**data)
         new_price_alert = await self.create(price__alert)
@@ -29,3 +29,12 @@ class PriceAlertRepository(BaseRepository[PriceAlert]):
         )
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
+    
+    async def get_untriggered_alerts(self, store_product_ids: list[str]):
+        stmt = select(self.model).where(
+            self.model.store_product_id.in_(store_product_ids),
+            self.model.is_triggered == False
+        )
+        result = await self.session.execute(stmt)
+        return result.scalars().all()
+    

@@ -10,9 +10,10 @@ product_router= APIRouter(prefix="/api/v1/products", tags=["Product"])
 @product_router.post("/")
 async def create_product(
     product_data: CreateProduct,
-    product_service: ProductService = Depends(get_product_service)
+    product_service: ProductService = Depends(get_product_service),
+    user: User = Depends(get_current_user)
 ):
-    response = await product_service.create_product(product_data)
+    response = await product_service.create_product(product_data, current_user=user)
     return response
 
 @product_router.post("/bulk")

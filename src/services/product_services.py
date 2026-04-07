@@ -8,7 +8,7 @@ class ProductService:
     def __init__(self, uow_factory: UnitOfWork):
         self.uow_factory = uow_factory
 
-    async def create_product(self, current_user: User, product_data: CreateProduct):
+    async def create_product(self, product_data: CreateProduct, current_user: User):
         async with self.uow_factory:
             if current_user.role != UserRole.ADMIN:
                 raise PermissionDenied(
@@ -26,11 +26,11 @@ class ProductService:
                     }
                 )
             new_product = await self.uow_factory.product_repo.create_product(product_data)
-        return {
-            "status": "success",
-            "message": "Product successfully created",
-            "data": ReadProduct.model_validate(new_product)
-        }
+            return {
+                "status": "success",
+                "message": "Product successfully created",
+                "data": ReadProduct.model_validate(new_product)
+            }
     
 
     async def bulk_create_products(self, current_user: User, products_data: list[CreateProduct]):
@@ -53,32 +53,32 @@ class ProductService:
     async def get_single_product(self, product_id: str):
         async with self.uow_factory:
             product = await self.uow_factory.product_repo.get_by_id(product_id)
-        return {
-            "status": "success",
-            "message": "Product successfully created",
-            "data": ReadProduct.model_validate(product)
-        }
+            return {
+                "status": "success",
+                "message": "Product successfully created",
+                "data": ReadProduct.model_validate(product)
+            }
     
 
     async def get_multiple_products(self, product_ids: list[str]):
         async with self.uow_factory:
             products = await self.uow_factory.product_repo.get_multiple_products(product_ids)
-        return {
-            "status": "success",
-            "message": "Products successfully retrieved",
-            "data": [ReadProduct.model_validate(product) for product in products]
-        }
+            return {
+                "status": "success",
+                "message": "Products successfully retrieved",
+                "data": [ReadProduct.model_validate(product) for product in products]
+            }
     
     async def get_products_by_category(self, category_id: str):
         async with self.uow_factory:
-            print("Hello World")
+            
             products = await self.uow_factory.product_repo.get_products_by_category(category_id)
-            print(products)
-        return {
-            "status": "success",
-            "message": "Products successfully retrieved",
-            "data": [ReadProduct.model_validate(product) for product in products]
-        }
+            
+            return {
+                "status": "success",
+                "message": "Products successfully retrieved",
+                "data": [ReadProduct.model_validate(product) for product in products]
+            }
 
     async def update_product(self, current_user: User, product_id: str, product_data: UpdateProduct):
         async with self.uow_factory:
@@ -99,11 +99,11 @@ class ProductService:
                 )
             
             updated_product = await self.uow_factory.product_repo.update_product(product_id, product_data)
-        return {
-            "status": "success",
-            "message": "Product successfully updated",
-            "data": ReadProduct.model_validate(updated_product)
-        }
+            return {
+                "status": "success",
+                "message": "Product successfully updated",
+                "data": ReadProduct.model_validate(updated_product)
+            }
     
     
     async def delete_product(self, current_user: User, product_id: str):
@@ -127,10 +127,10 @@ class ProductService:
         
             await self.uow_factory.product_repo.delete(product_id, soft=True)
 
-        return {
-            "status": "success",
-            "message": "Product successfully deleted"
-        }
+            return {
+                "status": "success",
+                "message": "Product successfully deleted"
+            }
     
     async def bulk_delete_products(self, current_user: User, products_id: list[str]):
         async with self.uow_factory:
@@ -151,11 +151,11 @@ class ProductService:
                 )
             
             deleted_products = await self.uow_factory.product_repo.bulk_delete_products(products_id)
-        return {
-            "status": "success",
-            "message": "Products successfully deleted",
-            "total_products_deleted": deleted_products
-        }
+            return {
+                "status": "success",
+                "message": "Products successfully deleted",
+                "total_products_deleted": deleted_products
+            }
         
     
 

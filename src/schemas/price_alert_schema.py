@@ -8,12 +8,12 @@ from src.schemas.store_product import ReadStoreProduct
 
 class BasePriceAlert(BaseModel):
     """Parent store schema which other store schemas inherit"""
-    target_price: str
+    target_price: float
     
 
 
 
-class PriceAlert(BasePriceAlert):
+class PriceAlertSchema(BasePriceAlert):
     """Schema for creating a price_alert"""
     store_product_id: str
     user_id: str
@@ -22,6 +22,8 @@ class PriceAlert(BasePriceAlert):
 
 class ReadPriceAlert(BasePriceAlert):
     """Schema for reading price_alert"""
+    id: str
+    store_product_id: str
     product_name: str
     store_name: str
 

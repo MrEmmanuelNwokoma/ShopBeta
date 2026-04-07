@@ -6,6 +6,7 @@ from src.api.v1.routes.product import product_router
 from src.api.v1.routes.store_product import store_product_router
 from src.api.v1.routes.price_history import price_history_router
 from src.api.v1.routes.price_alert import price_alert_router
+from src.api.v1.routes.favorite import favorite_router
 
 
 app = FastAPI(
@@ -29,5 +30,7 @@ app.include_router(store_product_router)
 app.include_router(price_history_router)
 
 app.include_router(price_alert_router)
+
+app.include_router(favorite_router)
 
 

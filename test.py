@@ -1,8 +1,7 @@
 from src.storage import db
 import asyncio
 
-from src.models import user, product, store, store_product, price_alert, price_history, category
-
+from src.models import user, product, store, store_product, price_alert, price_history, category, favorites, product_image
 async def main(): 
        
     try:

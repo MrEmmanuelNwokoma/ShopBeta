@@ -11,7 +11,7 @@ class StoreProductService:
     def __init__(self, uow_factory: UnitOfWork):
         self.uow_factory = uow_factory
 
-    async def add_product_to_store(self, current_user: User, store_product_data: CreateStoreProduct):
+    async def add_product_to_store(self, store_product_data: CreateStoreProduct, current_user: User):
         store_id = store_product_data.store_id
         product_id = store_product_data.product_id
         async with self.uow_factory:

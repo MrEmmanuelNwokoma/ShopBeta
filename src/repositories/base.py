@@ -43,17 +43,29 @@ class BaseRepository(Generic[ModelType]):
     #     result = await self.session.execute(stmt)
     #     return result.scalar_one_or_none()
     
-    async def get_by_id(self, id: str):
-        stmt = select(self.model).where(self.model.id == id)
+    from sqlalchemy import select
 
+    async def get_by_id(self, ids: str | list[str]):
+        stmt = select(self.model)
+
+        if isinstance(ids, list):
+            stmt = stmt.where(self.model.id.in_(ids))
+        else:
+            stmt = stmt.where(self.model.id == ids)
+        
         if hasattr(self.model, "is_deleted"):
             stmt = stmt.where(self.model.is_deleted.is_(False))
-        
+            
         if hasattr(self.model, "is_active"):
             stmt = stmt.where(self.model.is_active.is_(True))
 
-        result = await self.session.scalar(stmt)
-        return result
+        result = await self.session.execute(stmt)
+
+        
+        if isinstance(ids, list):
+            return result.scalars().all()
+        else:
+            return result.scalar_one_or_none()
     
  
     async def delete(self, id, soft: bool =False)-> bool:
