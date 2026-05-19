@@ -46,6 +46,7 @@ class BaseRepository(Generic[ModelType]):
     from sqlalchemy import select
 
     async def get_by_id(self, ids: str | list[str]):
+        print(f"Querying for ID: {repr(ids)}")  #
         stmt = select(self.model)
 
         if isinstance(ids, list):

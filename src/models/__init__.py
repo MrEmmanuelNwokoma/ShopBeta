@@ -7,3 +7,5 @@ from .store import Store
 from .store_product import StoreProduct
 from .user import User
 from .product_image import ProductImage
+from .notification import Notification
+from .notification_recipient import NotificationRecipient

@@ -7,7 +7,8 @@ from src.enums.enums import NotificationType
 
 if TYPE_CHECKING:
     from src.models.user import User
-    from src.models.notification_recipient import Notification
+    from src.models.notification_recipient import NotificationRecipient
+
 
 class Notification(Basemodel, Base):
     __tablename__="notifications"
@@ -21,4 +22,4 @@ class Notification(Basemodel, Base):
 
     sender: Mapped["User"] = relationship(back_populates="sent_notifications")
 
-    recipients: Mapped[""]
+    # recipients: Mapped[""]

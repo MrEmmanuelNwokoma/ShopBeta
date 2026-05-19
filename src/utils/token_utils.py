@@ -17,3 +17,5 @@ class TokenUtils:
         user.verification_token  = str(token)
         user.verification_token_expires_at = datetime.now(timezone.utc) + timedelta(minutes=expiry_time)
         return user.verification_token
+    
+

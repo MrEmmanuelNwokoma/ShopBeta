@@ -12,8 +12,7 @@ class SyncNotificationService:
     def create_notification(self, notification_data: CreateNotification, recipient_ids: list[str] = []):
         with self.uow_factory as uow:
             recipients = []
-            new_notification = uow.sync_notification_repo.create(
-                notification_data)
+            new_notification = uow.sync_notification_repo.create_notification(notification_data)
             
             for recipient_id in recipient_ids:
                 notification_recipient = NotificationRecipient(
@@ -24,3 +23,5 @@ class SyncNotificationService:
             if recipients:
                 uow.sync_notification_recipient_repo.bulk_create(recipients)
             return new_notification
+        
+        

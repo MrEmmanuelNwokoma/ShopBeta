@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from datetime import datetime
-from sqlalchemy import ForeignKey
+from datetime import datetime, timezone
+from sqlalchemy import ForeignKey, DateTime
 from typing import TYPE_CHECKING
 from src.models.base import Basemodel, Base
 
@@ -17,7 +17,7 @@ class PriceAlert(Basemodel, Base):
     target_price: Mapped[float] = mapped_column(nullable=False)
     is_active: Mapped[bool] = mapped_column(default=False)
     is_triggered: Mapped[bool] = mapped_column(default=False)
-    is_triggered_at: Mapped[datetime] = mapped_column(default=False)
+    is_triggered_at: Mapped[datetime] = mapped_column(DateTime(timezone), nullable=False,  default=datetime.now(timezone.utc))
     
 
 

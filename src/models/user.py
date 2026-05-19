@@ -11,6 +11,8 @@ from src.enums.enums import UserRole
 if TYPE_CHECKING:
     from src.models.notification import Notification
     from src.models.notification_recipient import NotificationRecipient
+    from src.models.device_tokens import DeviceToken
+
 
 class User(Basemodel, Base):
     __tablename__="users"
@@ -39,5 +41,7 @@ class User(Basemodel, Base):
 
     sent_notifications: Mapped[list["Notification"]] = relationship(back_populates="sender")
 
-    notification_recipients: Mapped[list["NotificationRecipient"]] = relationship(back_populates="user")
+    # notification_recipients: Mapped[list["NotificationRecipient"]] = relationship(back_populates="user")
+    
+    device_tokens: Mapped[list["DeviceToken"]] = relationship(back_populates="user")
     

@@ -4,6 +4,8 @@ from src.models.user import User
 from src.services.store_services import StoreService
 from src.api.v1.dependencies import get_store_service, get_current_user
 from src.schemas.store_schema import CreateStore, UpdateStore
+from src.core.exceptions import PermissionDenied
+from src.enums.enums import UserRole
 
 
 
@@ -15,6 +17,13 @@ async def create_store(
     current_user: User = Depends(get_current_user),
     store_service: StoreService = Depends(get_store_service)
 ):
+    if current_user.role != UserRole.ADMIN:
+        raise PermissionDenied(
+            message="You are not permitted to add prduct to store",
+            details={
+                "recommendation": "Pass the correct admin id"
+            }
+        )
     response = await store_service.create_store(current_user=current_user, store_data=store_data)
     return response
 

@@ -1,22 +1,25 @@
 from sqlalchemy.orm import Session
 from src.repositories.sync_notification_repo import SyncNotificationRepository
+from src.repositories.sync_notification_recipient_repo import SyncNotificationRecipientRepository
 
 
 
 class SyncUnitOfWork:
-    def __init__(self):
-        self.session = Session
+    def __init__(self, session: Session):
+        self.session = session
 
-        self.notification_repo = SyncNotificationRepository
+        self.sync_notification_repo = SyncNotificationRepository(session)
+        self.sync_notification_recipient_repo = SyncNotificationRecipientRepository(session)
 
     
 
-    async def __aenter__(self):
-        # await self.session.begin()
+    def __enter__(self):
+        self.session.begin()
         return self
     
-    async def __aexit__(self, exc_type, exc, tb):
+    def __exit__(self, exc_type, exc, tb):
         if exc_type is not None:
-            await self.session.rollback()
+            self.session.rollback()
         else:
-            await self.session.commit()
+            self.session.commit()
+            

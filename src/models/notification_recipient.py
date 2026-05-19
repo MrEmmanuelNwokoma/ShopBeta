@@ -21,6 +21,6 @@ class NotificationRecipient(Basemodel, Base):
 
 
 
-    notification: Mapped["Notification"] = relationship(back_populates="recipients")
-    user: Mapped["User"] = relationship(back_populates="notification_recipients")
+    # notification: Mapped["Notification"] = relationship(back_populates="recipients")
+    # user: Mapped["User"] = relationship(back_populates="notification_recipients")
 

@@ -45,6 +45,7 @@ async def seed_data():
             stores.append(Store(**store))
 
         await store_repo.bulk_create(stores)
+        await session.commit()
 
         category_map = {cat.name: cat.id for cat in categories}
         product_repo = ProductRepository(session)

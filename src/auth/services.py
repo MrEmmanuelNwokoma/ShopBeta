@@ -9,7 +9,7 @@ from src.auth.security import verify_password, hash_password
 from src.auth.jwt import retrieve_token
 from src.auth.schema import TokenResponse
 from src.utils.token_utils import TokenUtils
-
+from src.events.user_events import UserCreatedEvent
 
 class AuthService:
     """Auth services for authentication services"""
@@ -19,8 +19,9 @@ class AuthService:
     
     async def create_user(self, user_data: CreateUserSchema):
         """Function for creating user"""
-        async with self.uow_factory:
-            user = await self.uow_factory.user_repo.get_user_by_email(email=user_data.email)
+        async with self.uow_factory as uow:
+            token_utils = TokenUtils(uow)
+            user = await uow.user_repo.get_user_by_email(email=user_data.email)
             if user:
                 raise UserAlreadyExistsError(message="Email already exists in database", details={
                     "recommendation": "user should provide a different email"
@@ -29,6 +30,14 @@ class AuthService:
             data['password'] = hash_password(user_data.password)
             user = User(**data)
             created_user = await self.uow_factory.user_repo.create(user)
+            verification_token = await token_utils.generate_user_verfication_token(user)
+            print(verification_token)
+            if verification_token:
+                await self.uow_factory.collect_event(
+                    UserCreatedEvent(
+                        first_name=user.first_name, verification_token=verification_token, event_type="NEW_USER_CREATED", email=user.email
+                    )
+                )
             
             return ReadUser.model_validate(created_user)
 
@@ -78,9 +87,9 @@ class AuthService:
             )
         
     async def request_password_reset_token(self, email):
-        async with self.uow_factory:
-            token_utils = TokenUtils(self.uow_factory)
-            user = await self.uow_factory.user_repo.get_user_by_email(email)
+        async with self.uow_factory as uow:
+            token_utils = TokenUtils(uow)
+            user = await uow.user_repo.get_user_by_email(email)
             if not user:
                 raise EntityNotFound(
                     message="User with the provided email does not exist",
@@ -92,15 +101,15 @@ class AuthService:
                 "verification_token": token,
                 "verification_token_expires_at": user.verification_token_expires_at
             }
-            await self.uow_factory.user_repo.update(id=user.id, data=updated_data)
+            await uow.user_repo.update(id=user.id, data=updated_data)
             return {
                 "status": "success",
                 "message": "Token successfully sent"
             }
     
     async def verify_token(self, token):
-       async with self.uow_factory:
-            user = await self.uow_factory.user_repo.verify_token(token)
+       async with self.uow_factory as uow:
+            user = await uow.user_repo.verify_token(token)
             if not user:
                 raise EntityNotFound(
                     message="User not found",

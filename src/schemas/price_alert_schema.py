@@ -16,7 +16,7 @@ class BasePriceAlert(BaseModel):
 class PriceAlertSchema(BasePriceAlert):
     """Schema for creating a price_alert"""
     store_product_id: str
-    user_id: str
+    
     
 
 

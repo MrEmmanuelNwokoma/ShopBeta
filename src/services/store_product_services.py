@@ -1,15 +1,17 @@
 from src.unit_of_work.unit_of_work import UnitOfWork
-from src.core.exceptions import EntityNotFound, PermissionDenied
+from src.core.exceptions import EntityNotFound, PermissionDenied, EntityAlreadyExist
 from src.enums.enums import UserRole
 from src.schemas.store_product import CreateStoreProduct, ReadStoreProduct
 from src.schemas.price_history_schema import CreatePriceHistory
 from src.models.store_product import StoreProduct
 from src.models.user import User
+from src.services.price_alert_services import PriceAlertService
 
 
 class StoreProductService:
-    def __init__(self, uow_factory: UnitOfWork):
+    def __init__(self, uow_factory: UnitOfWork, price_alert: PriceAlertService):
         self.uow_factory = uow_factory
+        self.price_alert = price_alert
 
     async def add_product_to_store(self, store_product_data: CreateStoreProduct, current_user: User):
         store_id = store_product_data.store_id
@@ -22,6 +24,7 @@ class StoreProductService:
                         "recommendation": "Make sure user is an admin"
                     }
                 )
+            
             store = await self.uow_factory.store_repo.get_by_id(store_id)
             if not store:
                 raise EntityNotFound(
@@ -40,7 +43,7 @@ class StoreProductService:
                 )
             store_product = await self.uow_factory.store_product_repo.get_store_product(store_id, product_id)
             if store_product:
-                raise EntityNotFound(
+                raise EntityAlreadyExist(
                     message="Store Product already exist in database",
                     details={
                         "recommendation": "Pass the correct store id and product_id."
@@ -53,7 +56,24 @@ class StoreProductService:
             await self.uow_factory.price_history_repo.create_price_history(price_history_data)
         
             return ReadStoreProduct.model_validate(new_store_product)
-    
+        
+    async def update_product_price(self, store_product_id: str, current_price: str):
+        async with self.uow_factory as uow:
+            store_product = await uow.store_product_repo.get_by_id(store_product_id)
+            if not store_product:
+                raise EntityNotFound(
+                    message="Store Product not found in database",
+                    details={
+                        "recommendation": "Pass the correct store_product_id."
+                    }
+                ) 
+            updated_price = await uow.store_product_repo.update(id=store_product_id, data={"price": current_price})
+        await self.price_alert.monitor_alert(store_product_id)
+        return updated_price
+
+               
+
+
     async def get_store_product(self, store_product_id: str):
         store_product = await self.uow_factory.store_product_repo.get_by_id(store_product_id)
         return store_product
