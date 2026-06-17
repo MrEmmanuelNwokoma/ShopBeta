@@ -32,7 +32,7 @@ class UnitOfWork:
         self._pending_event.append(event)
     
     async def __aenter__(self):
-        await self.session.begin()
+        # await self.session.begin()
         return self
     
     async def __aexit__(self, exc_type, exc, tb):

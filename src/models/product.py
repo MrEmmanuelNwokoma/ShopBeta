@@ -15,8 +15,7 @@ class Product(Basemodel, Base):
     
     category_id: Mapped[str] = mapped_column(ForeignKey("categories.id"))
     name: Mapped[str] = mapped_column(nullable=False)
-    brand: Mapped[str] = mapped_column(nullable=False)
-    description: Mapped[str] = mapped_column(nullable=False)
+    # brand: Mapped[str] = mapped_column(nullable=False)
     is_deleted: Mapped[bool] = mapped_column(nullable=False, default=False)
 
 

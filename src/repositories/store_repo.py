@@ -20,8 +20,8 @@ class StoreRepository(BaseRepository[Store]):
     
     
     async def get_by_name(self, name: str):
-        result = await self.session.execute(select(self.model).where(self.model.name  == name))
-        return result.scalars().all()
+        result = await self.session.execute(select(self.model).where(self.model.name == name))
+        return result.scalar_one_or_none()
     
     async def get_store_by_status(self, is_active: bool)-> list[Store]:
         result = await self.session.execute(select(self.model).where(self.model.is_active.is_(is_active)))

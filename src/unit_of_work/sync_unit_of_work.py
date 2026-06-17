@@ -10,6 +10,7 @@ class SyncUnitOfWork:
 
         self.sync_notification_repo = SyncNotificationRepository(session)
         self.sync_notification_recipient_repo = SyncNotificationRecipientRepository(session)
+        
 
     
 

@@ -1,7 +1,7 @@
 from src.storage import db
 import asyncio
 from src.unit_of_work.unit_of_work import UnitOfWork
-from scripts.data import CATEGORIES, STORES, PRODUCTS, ADMIN_USERS
+from scripts.data import CATEGORIES, STORES, ADMIN_USERS
 from src.auth.security import hash_password
 from src.repositories.user_repo import UserRepository
 from src.repositories.category_repo import CategoryRepository
@@ -48,22 +48,22 @@ async def seed_data():
         await session.commit()
 
         category_map = {cat.name: cat.id for cat in categories}
-        product_repo = ProductRepository(session)
+        # product_repo = ProductRepository(session)
         
-        products = []
-        for product in PRODUCTS:
-            category_name = product.pop("category")
-            print(f"Trying to map", {category_name})
-            category_id = category_map.get(category_name)
-            print(f"{category_id}")
-            if not category_id:
-                raise ValueError("Id not of found")
-            product["category_id"] = category_id
+        # products = []
+        # for product in PRODUCTS:
+        #     category_name = product.pop("category")
+        #     print(f"Trying to map", {category_name})
+        #     category_id = category_map.get(category_name)
+        #     print(f"{category_id}")
+        #     if not category_id:
+        #         raise ValueError("Id not of found")
+        #     product["category_id"] = category_id
             
-            products.append(Product(**product))
+        #     products.append(Product(**product))
             
 
-        await product_repo.bulk_create(products)
+        # await product_repo.bulk_create(products)
 
         await session.commit()
         print("Seeding completed successfully")

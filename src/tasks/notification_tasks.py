@@ -12,7 +12,7 @@ def create_notification(self, notification_data: dict, recipient_ids: list[str])
     data = CreateNotification(**notification_data)
 
     try:
-        with sync_db.get_session as session:
+        with sync_db.get_session() as session:
             uow_factory = SyncUnitOfWork(session)
             notification_service = SyncNotificationService(uow_factory)
             notification_service.create_notification(data, recipient_ids)

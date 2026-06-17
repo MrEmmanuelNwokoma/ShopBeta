@@ -7,6 +7,7 @@ from src.models.base import Base
 
 ModelType = TypeVar("ModelType", bound=Base)
 
+
 class BaseRepository(Generic[ModelType]):
     """Base repository for all child repositories"""
     def __init__(self, model: Type[ModelType], session: AsyncSession):
@@ -20,6 +21,7 @@ class BaseRepository(Generic[ModelType]):
     
     async def bulk_create(self, objs: list[ModelType]):
         self.session.add_all(objs)
+        await self.session.flush()
         return objs
     
     async def get_all(self):
@@ -43,7 +45,7 @@ class BaseRepository(Generic[ModelType]):
     #     result = await self.session.execute(stmt)
     #     return result.scalar_one_or_none()
     
-    from sqlalchemy import select
+    
 
     async def get_by_id(self, ids: str | list[str]):
         print(f"Querying for ID: {repr(ids)}")  #
@@ -81,36 +83,36 @@ class BaseRepository(Generic[ModelType]):
         return True
     
     async def update(self, id: str, filters: dict | None = None, data: dict | None = None) -> bool:
-            if not data:
-                return False
+        if not data:
+            return False
 
-            IGNORE_LIST = [
-                'id', 'created_at', 'updated_at'
-            ]
-            updated_dict = {}
-            if data:
-                updated_dict = {
-                    key: value for key, value in data.items() if key not in IGNORE_LIST
-                }
+        IGNORE_LIST = [
+            'id', 'created_at', 'updated_at'
+        ]
+        updated_dict = {}
+        if data:
+            updated_dict = {
+                key: value for key, value in data.items() if key not in IGNORE_LIST
+            }
 
-            stmt = update(self.model).values(**updated_dict)
-            if id:
-                stmt = stmt.where(getattr(self.model, "id") == id)
-            elif filters:
-                stmt = stmt.filter_by(**filters)
-            else:
-                raise ValueError(
-                    "You must provide either id or filters to update.")
+        stmt = update(self.model).values(**updated_dict)
+        if id:
+            stmt = stmt.where(getattr(self.model, "id") == id)
+        elif filters:
+            stmt = stmt.filter_by(**filters)
+        else:
+            raise ValueError(
+                "You must provide either id or filters to update.")
 
-            await self.session.execute(stmt)
-            return updated_dict
+        await self.session.execute(stmt)
+        return updated_dict
 
     
     async def verify_token(self, token: str):
         result = await self.session.execute(select(self.model).where(self.model.verification_token == token))
-        return result
+        return result.scalar_one_or_none()
     
 
     async def get_by_phone_number(self, phonenumber: str):
-       result = await self.session.execute(select(self.model).where(self.model.phone_number == phonenumber))
-       return result.scalar_one_or_none()
+        result = await self.session.execute(select(self.model).where(self.model.phone_number == phonenumber))
+        return result.scalar_one_or_none()

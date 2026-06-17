@@ -9,7 +9,6 @@ from src.schemas.store_schema import ReadStore
 class BaseStoreProduct(BaseModel):
     """Base store_product schema """
     price: str
-    instock: bool
     currency: str
 
 
@@ -17,6 +16,7 @@ class ReadStoreProduct(BaseStoreProduct):
     """Schema for reading store_product"""
     store: ReadStore
     product: ReadProduct
+    instock: bool
 
     model_config = ConfigDict(from_attributes=True)
 

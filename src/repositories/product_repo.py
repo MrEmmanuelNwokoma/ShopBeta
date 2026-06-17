@@ -1,4 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+from thefuzz import fuzz
 from sqlalchemy import select, delete, func
 from src.repositories.base import BaseRepository
 from src.models.product import Product
@@ -11,24 +12,34 @@ class ProductRepository(BaseRepository[Product]):
     def __init__(self, session: AsyncSession):
         super().__init__(Product, session)
     
-    
-    async def create_product(self, product_data: CreateProduct):
-        data = product_data.model_dump()
-        
-        product = Product(**data)
-        new_product = await self.create(product)
-        return new_product
-    
     async def bulk_create_products(self, products_data: list[CreateProduct]):
-        products = []
+        """Match or bulk create products"""
+        MATCH_THRESHOLD = 90
+        stmt = select(self.model)
+        result = await self.session.execute(stmt)
+        existing_products = result.scalars().all()
+        
+        new_products=[]
+        matched_products = []
 
         for product_data in products_data:
-            data = product_data.model_dump()
-            if "product_url" in data:
-                data["product_url"] = str(data["product_url"])
-            products.append(Product(**data))
-        await self.bulk_create(products)
-        return products
+            best_score = 0
+            best_match=None
+            for product in existing_products:
+                score = fuzz.token_sort_ratio(product_data.name, product.name)
+                if score > best_score:
+                    best_score = score
+                    best_match = product
+
+            if best_match and best_score >= MATCH_THRESHOLD:
+                matched_products.append(best_match)
+            else:
+                data = product_data.model_dump()
+                if "product_url" in data:
+                    data["product_url"] = str(data["product_url"])
+                new_products.append(Product(**data))
+        await self.bulk_create(new_products)
+        return new_products
     
     async def get_multiple_products(self, product_ids: list[str]):
         stmt = select(self.model).where(self.model.id.in_(product_ids))

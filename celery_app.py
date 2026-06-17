@@ -1,5 +1,6 @@
 import resend
 from celery import Celery
+from celery.schedules import crontab
 from src.core.pydantic_configuration import config
 
 
@@ -18,7 +19,15 @@ celery_app.conf.update(
     enable_utc=True,
     include=[
         "src.tasks.notification_tasks",
-        "src.tasks.email_task"
-    ]
+        "src.tasks.email_task",
+        "src.tasks.scrape_store_product"
+    ],
+    beat_schedule={
+        "scrape_jumia_products":{
+            "task": "add_product_to_store",
+            "schedule": crontab(minute="*/30")
+        }
+    }
+
 )
 

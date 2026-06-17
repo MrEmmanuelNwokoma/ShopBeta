@@ -1,17 +1,17 @@
 from pydantic import BaseModel, ConfigDict
 
 class BasePriceHistory(BaseModel):
-    price: float
+    price: str
     store_product_id: str
 
 class CreatePriceHistory(BasePriceHistory):
     """Create price history"""
 
     @classmethod
-    def from_store_product(cls, new_store_product):
+    def from_store_product(cls, store_product):
         return cls(
-            store_product_id=str(new_store_product.id),
-            price=str(new_store_product.price)
+            store_product_id=str(store_product.id),
+            price=str(store_product.price)
         )
     
 class ReadPriceHistory(BasePriceHistory):

@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 class DeviceToken(Basemodel, Base):
     __tablename__="device_tokens"
 
-    user_id: Mapped[str] = mapped_column(nullable=False, ForeignKey("users.id"))
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), nullable=False)
     token: Mapped[str] = mapped_column(nullable=False)
     platform: Mapped[str] = mapped_column(nullable=False)
 

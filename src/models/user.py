@@ -26,7 +26,10 @@ class User(Basemodel, Base):
     is_deleted: Mapped[bool] = mapped_column(default=False)
     is_email_verified: Mapped[bool] = mapped_column(default=False)
     verification_token: Mapped[str] = mapped_column(nullable=True)
-    verification_token_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    verification_token_expires_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True
+    )
     last_login: Mapped[str] = mapped_column(nullable=True)
 
 
@@ -37,11 +40,17 @@ class User(Basemodel, Base):
         cascade="all, delete-orphan"
     )
     
-    favorites: Mapped[list["Favorite"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    favorites: Mapped[list["Favorite"]] = relationship(
+        back_populates="user", 
+        cascade="all, delete-orphan"
+    )
 
-    sent_notifications: Mapped[list["Notification"]] = relationship(back_populates="sender")
+    sent_notifications: Mapped[list["Notification"]] = relationship(
+        back_populates="sender"
+    )
 
     # notification_recipients: Mapped[list["NotificationRecipient"]] = relationship(back_populates="user")
-    
-    device_tokens: Mapped[list["DeviceToken"]] = relationship(back_populates="user")
+    device_tokens: Mapped[list["DeviceToken"]] = relationship(
+        back_populates="user"
+    )
     

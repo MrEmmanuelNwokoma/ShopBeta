@@ -1,12 +1,12 @@
 CATEGORIES = [
     {"name": "Smartphone"},
     {"name": "Laptop"},
-    {"name": "Tablet"},
-    {"name": "SmartWatch"},
-    {"name": "Headphones"},
-    {"name": "Speakers"},
-    {"name": "Monitor"},
-    {"name": "Gaming console"}
+    # {"name": "Tablet"},
+    # {"name": "SmartWatch"},
+    # {"name": "Headphones"},
+    # {"name": "Speakers"},
+    # {"name": "Monitor"},
+    # {"name": "Gaming console"}
 ]
 
 STORES = [
@@ -30,27 +30,25 @@ STORES = [
     }
 ]
 
-PRODUCTS = [
-    {
-        "name": "Redmi 15c",
-        "brand": "Redmi",
-        "description": "A smartphone",
-        "category": "Smartphone"
-    },
-    {
-        "name": "Redmi 12c",
-        "brand": "Redmi",
-        "description": "A smartphone",
-        "category": "Smartphone"
-    },
-    {
-        "name": "Redmi 13c",
-        "brand": "Redmi",
-        "description": "A smartphone",
-        "category": "Smartphone"
-    }
+# PRODUCTS = [
+#     {
+#         "name": "Redmi 15c",
+    
+#         "category": "Smartphone"
+#     },
+#     {
+#         "name": "Redmi 12c",
 
-]
+
+#         "category": "Smartphone"
+#     },
+#     {
+#         "name": "Redmi 13c",
+   
+#         "category": "Smartphone"
+#     }
+
+# ]
 
 ADMIN_USERS = [
     {

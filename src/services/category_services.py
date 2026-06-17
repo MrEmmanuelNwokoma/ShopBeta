@@ -6,10 +6,13 @@ class CategoryService:
         self.uow_factory = uow_factory
     
     async def get_categories(self):
-        async with self.uow_factory:
             categories = await self.uow_factory.category_repo.get_categories()
             if not categories:
                 return []
             return categories
     
+    async def get_category_by_name(self, name: str):
+        async with self.uow_factory:
+            category = await self.uow_factory.category_repo.get_category_by_name(name)
+            return category
     

@@ -10,14 +10,17 @@ from src.auth.jwt import retrieve_token
 from src.auth.schema import TokenResponse
 from src.utils.token_utils import TokenUtils
 from src.events.user_events import UserCreatedEvent
+from src.events.verification_event import VerificationRequestedEvent
+from pydantic import EmailStr
 
 class AuthService:
     """Auth services for authentication services"""
-    def __init__(self, uow_factory: UnitOfWork) -> None:
+    def __init__(self, uow_factory: UnitOfWork):
         self.uow_factory = uow_factory
+        self.token_utils = TokenUtils()
     
     
-    async def create_user(self, user_data: CreateUserSchema):
+    async def register_user(self, user_data: CreateUserSchema):
         """Function for creating user"""
         async with self.uow_factory as uow:
             token_utils = TokenUtils(uow)
@@ -30,15 +33,13 @@ class AuthService:
             data['password'] = hash_password(user_data.password)
             user = User(**data)
             created_user = await self.uow_factory.user_repo.create(user)
-            verification_token = await token_utils.generate_user_verfication_token(user)
-            print(verification_token)
-            if verification_token:
-                await self.uow_factory.collect_event(
+            verification_token = await self.request_verification_token(user.email)
+            await self.uow_factory.collect_event(
                     UserCreatedEvent(
                         first_name=user.first_name, verification_token=verification_token, event_type="NEW_USER_CREATED", email=user.email
                     )
                 )
-            
+                    
             return ReadUser.model_validate(created_user)
 
         
@@ -86,9 +87,17 @@ class AuthService:
                 access_token = access_token
             )
         
-    async def request_password_reset_token(self, email):
+    async def request_verification_token(self):            
+            token, expires_at = await self.token_utils.generate_user_verfication_token()
+            updated_data = {
+                "verification_token": token,
+                "verification_token_expires_at": expires_at
+            }
+            
+            return updated_data
+    
+    async def resend_verification_token(self, email: EmailStr):
         async with self.uow_factory as uow:
-            token_utils = TokenUtils(uow)
             user = await uow.user_repo.get_user_by_email(email)
             if not user:
                 raise EntityNotFound(
@@ -96,17 +105,14 @@ class AuthService:
                     details={
                         "recommendations": "Ensure user passes the correct email"
                     })
-            token = await token_utils.generate_user_verfication_token(user)
-            updated_data = {
-                "verification_token": token,
-                "verification_token_expires_at": user.verification_token_expires_at
-            }
-            await uow.user_repo.update(id=user.id, data=updated_data)
-            return {
-                "status": "success",
-                "message": "Token successfully sent"
-            }
-    
+            data = await self.request_verification_token()
+            await uow.user_repo.update(id=user.id, data=data)
+            raise VerificationRequestedEvent(
+                first_name=user.first_name, verification_token=data["verification_token"], event_type="NEW_USER_CREATED",
+                email=user.email
+            )
+
+
     async def verify_token(self, token):
        async with self.uow_factory as uow:
             user = await uow.user_repo.verify_token(token)
@@ -137,7 +143,15 @@ class AuthService:
                 )
             user.verification_token = None
             user.verification_token_expires_at = None
-            return ReadUser.model_validate(user)
+            return user
+       
+    async def verify_user_email(self, token: str):
+        async with self.uow_factory:
+            verified_user = await self.verify_token(token)
+            if not verified_user:
+                return False
+            verified_user.is_email_verified = True
+            return verified_user
        
     async def change_password(self, user_id: str, new_password: str):
         user = await self.uow_factory.user_repo.get_by_id(user_id)

@@ -22,4 +22,8 @@ class EventType(str, Enum):
     USER_CREATED = "user_created"
     PRICE_ALERT_TRIGGERED = "price_alert_triggered"
     DOMAIN_EVENT = "domain_event"
-    
+
+
+class Currency(str, Enum):
+    USD = "usd"
+    NGN = "ngn"

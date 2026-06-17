@@ -35,7 +35,7 @@ class StoreService:
                 "data": [ReadStore.model_validate(store) for store in stores]
             }
     
-        ReadStore.model_validate(store)
+        
     async def get_single_store(self, store_id: str):
         async with self.uow_factory:
             store = await self.uow_factory.store_repo.get_by_id(store_id)
@@ -45,6 +45,11 @@ class StoreService:
                 "data": ReadStore.model_validate(store)
             }
     
+    async def get_store_by_name(self, name: str):
+        async with self.uow_factory:
+            store = await self.uow_factory.store_repo.get_by_name(name)
+            return store
+        
 
     async def update_store(self, current_user: User, store_id: str, store_data: UpdateStore):
         if current_user.role != UserRole.ADMIN:

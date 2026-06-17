@@ -31,20 +31,13 @@ def get_auth_service(uow: UnitOfWork = Depends(get_uow)):
 def get_user_service(uow: UnitOfWork = Depends(get_uow)):
     return UserService(uow)
 
-def get_store_service(uow: UnitOfWork = Depends(get_uow)):
-    return StoreService(uow)
-
-def get_product_service(uow: UnitOfWork = Depends(get_uow)):
-    return ProductService(uow)
-
-def get_store_product_service(uow: UnitOfWork = Depends(get_uow)):
-    return StoreProductService(uow)
 
 def get_price_history_service(uow: UnitOfWork = Depends(get_uow)):
     return PriceHistoryService(uow)
 
 def get_price_alert_service(uow: UnitOfWork = Depends(get_uow)):
     return PriceAlertService(uow)
+
 
 def get_favorite_service(uow: UnitOfWork = Depends(get_uow)):
     return FavoriteService(uow)

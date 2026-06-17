@@ -1,7 +1,7 @@
+import os
 from jinja2 import Environment, FileSystemLoader
 import resend
 from src.core.pydantic_configuration import config
-import os
 
 resend.api_key = config.RESEND_API_KEY
 

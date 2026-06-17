@@ -8,8 +8,7 @@ from pydantic import BaseModel, HttpUrl, ConfigDict
 class BaseProduct(BaseModel):
     """Parent store schema which other store schemas inherit"""
     name: str
-    brand: str
-    description: str
+    
     
     
 

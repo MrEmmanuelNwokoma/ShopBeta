@@ -17,9 +17,9 @@ class StoreProduct(Basemodel, Base):
 
     store_id: Mapped[str] = mapped_column(ForeignKey("stores.id"), nullable=False)
     product_id: Mapped[str] = mapped_column(ForeignKey("products.id"), nullable=False)
-    price: Mapped[float] = mapped_column(nullable=False)
+    price: Mapped[str] = mapped_column(nullable=False)
     currency: Mapped[str] = mapped_column(String(3), nullable=False)
-    instock: Mapped[bool] = mapped_column(nullable=False)
+    instock: Mapped[bool] = mapped_column(nullable=False, default=True)
     
 
 
