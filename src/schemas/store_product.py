@@ -2,13 +2,14 @@
 Pydantic schemas for validation
 """
 from pydantic import BaseModel, ConfigDict
+from decimal import Decimal
 from src.schemas.product_schema import ReadProduct
 from src.schemas.store_schema import ReadStore
 
 
 class BaseStoreProduct(BaseModel):
     """Base store_product schema """
-    price: str
+    price: Decimal
     currency: str
 
 

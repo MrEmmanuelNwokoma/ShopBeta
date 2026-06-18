@@ -2,13 +2,14 @@
 Pydantic schema for validation
 """
 from pydantic import BaseModel, ConfigDict
+from decimal import Decimal
 from src.schemas.store_product import ReadStoreProduct
 
 
 
 class BasePriceAlert(BaseModel):
     """Parent store schema which other store schemas inherit"""
-    target_price: float
+    target_price: Decimal
     
 
 

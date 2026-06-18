@@ -1,7 +1,8 @@
 from pydantic import BaseModel, ConfigDict
+from decimal import Decimal
 
 class BasePriceHistory(BaseModel):
-    price: str
+    price: Decimal
     store_product_id: str
 
 class CreatePriceHistory(BasePriceHistory):

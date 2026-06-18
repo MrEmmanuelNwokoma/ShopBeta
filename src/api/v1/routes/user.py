@@ -8,7 +8,7 @@ from src.schemas.user_schema import UpdateUser
 
 user_router = APIRouter(prefix="/api/v1/users", tags=["Users"])
 
-@user_router.get("/me/profile")
+@user_router.get("/me")
 async def get_user_profile(
     current_user: User = Depends(get_current_user)
 ):

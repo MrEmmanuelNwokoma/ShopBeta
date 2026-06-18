@@ -73,7 +73,6 @@ async def set_new_password(
 async def request_verification_token(
     email: VerificationForm,
     auth_service: AuthService = Depends(get_auth_service)
-
 ):
     response = await auth_service.request_verification_token(email.email)
     return response
