@@ -11,7 +11,7 @@ class ProductRepository(BaseRepository[Product]):
     "Product repository"
     def __init__(self, session: AsyncSession):
         super().__init__(Product, session)
-    
+
     async def bulk_create_products(self, products_data: list[CreateProduct]):
         """Match or bulk create products"""
         MATCH_THRESHOLD = 90

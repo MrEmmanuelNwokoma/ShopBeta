@@ -31,5 +31,4 @@ class ReadPriceAlert(BasePriceAlert):
    
 class UpdatePriceAlert(BasePriceAlert):
     """Schema for updating price_alert"""
-    store_product_id: str
-    user_id: str
+    id: str

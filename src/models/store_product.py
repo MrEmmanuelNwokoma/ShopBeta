@@ -20,7 +20,7 @@ class StoreProduct(Basemodel, Base):
     product_id: Mapped[str] = mapped_column(ForeignKey("products.id"), nullable=False)
     price: Mapped[Decimal] = mapped_column(nullable=False)
     currency: Mapped[str] = mapped_column(String(3), nullable=False)
-    instock: Mapped[bool] = mapped_column(nullable=False, default=True)
+    product_url: Mapped[str] = mapped_column(nullable=False)
     
 
 

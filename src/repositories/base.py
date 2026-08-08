@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update
+from sqlalchemy import select, update, delete
 from typing import Generic, TypeVar, Type
 from pydantic import EmailStr
 from src.models.base import Base
@@ -32,6 +32,11 @@ class BaseRepository(Generic[ModelType]):
 
         result = await self.session.scalars(stmt)
         return result.all()
+    
+    async def delete_all(self):
+        stmt = delete(self.model)
+        return True
+
 
     async def get_by_email(self, email: EmailStr):
         result = await self.session.execute(select(self.model).where(self.model.email == email))

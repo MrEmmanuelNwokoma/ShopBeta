@@ -17,14 +17,14 @@ STORES = [
         "supports_api": False
     },
     {
-        "name": "JumiaNigeria",
-        "website_url": "https://www.jumianigeria.com",
+        "name": "Slot",
+        "website_url": "https://slot.ng",
         "is_active": True,
         "supports_api": False
     },
     {
-        "name": "Aliexpress",
-        "website_url": "https://www.aliexpress.com",
+        "name": "Konga",
+        "website_url": "https://www.konga.com",
         "is_active": False,
         "supports_api": False
     }

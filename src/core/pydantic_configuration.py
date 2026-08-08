@@ -15,8 +15,16 @@ class PydanticConfiguration(BaseSettings):
     MAIL_FROM: str = "onboarding@resend.dev"
     FIREBASE_CREDENTIALS: str
     JUMIA_URL: dict = {
-        "Smartphone": "https://www.jumia.com.ng/phones-tablets/smartphones/",
+        "Smartphone": "https://www.jumia.com.ng/mobile-phones/",
         "Laptop": "https://www.jumia.com.ng/computing/laptops/"
+    }
+    SLOT_URL: dict = {
+        "Smartphone": "https://slot.ng/categories/phones-and-tablets",
+        "Laptop": "https://slot.ng/category/laptops",
+    }
+    KONGA_URL: dict = {
+        "Smartphone": "https://www.konga.com/category/phones-tablets-5294",
+        "Laptop": "https://www.konga.com/category/laptops-3678",
     }
 
 

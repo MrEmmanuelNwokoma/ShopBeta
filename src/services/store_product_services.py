@@ -14,7 +14,7 @@ class StoreProductService:
         self.uow_factory = uow_factory
         self.price_alert = price_alert
 
-    async def bulk_add_products_to_store(self, created_products: list[Product], price_map: dict, store_id: str):
+    async def bulk_add_products_to_store(self, created_products: list[Product], price_map: dict, url_map: dict, store_id: str):
             
         store_products = []  
     
@@ -47,7 +47,8 @@ class StoreProductService:
                     product_id=created_product.id,
                     price=(price_map[created_product.name]),
                     store_id=store_id,
-                    currency=Currency.NGN           
+                    currency=Currency.NGN,
+                    product_url=(url_map[created_product.name])        
                 )
             )
         new_store_products = await self.uow_factory.store_product_repo.bulk_create(store_products)

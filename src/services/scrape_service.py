@@ -14,6 +14,7 @@ from src.services.store_product_services import StoreProductService
 from src.services.store_services import StoreService
 from src.services.price_alert_services import PriceAlertService
 from src.services.device_token import DeviceTokenService
+from src.scrapers.base_scraper import BaseScraper
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -28,30 +29,40 @@ class ScrapeService:
         self.device_token_service = DeviceTokenService(uow_factory)
         self.price_alert = PriceAlertService(uow_factory)
         self.store_product_service = StoreProductService(uow_factory, self.price_alert)
+    
+    async def clean_price(self, price: str):
+        price = price.split("-")[0]  # take the first price if range
+        # print(repr(price.split("-")[0]))
+        return Decimal(price.replace("₦", "").replace(",", "").strip())
 
-    async def add_jumia_products(self):   
-        store = await self.uow_factory.store_repo.get_by_name("Jumia")
+    async def add_store_products(self, scraper: BaseScraper, store_name: str, category_urls: dict):   
+        store = await self.uow_factory.store_repo.get_by_name(store_name)
         logger.info("Store: %s", store)
         store_id = store.id
 
         categories = await self.category_service.get_categories()
         logger.info("Categories: %s", categories)
 
-        jumia_urls = {category.id: config.JUMIA_URL[category.name] for category in categories}
-        logger.info("URLs: %s", jumia_urls)
+        mapped_urls = {category.id: category_urls[category.name] for category in categories}
+        logger.info("URLs: %s", mapped_urls)
 
-        raw_products = jumia_scraper.scrape_jumia_products(jumia_urls)
+        raw_products = scraper.scrape_store_products(mapped_urls)
         logger.info("Raw products count: %s", len(raw_products))
 
         price_map = {}
-        for product, price in raw_products:
-            price_map[product.name] = Decimal(price)
+        url_map= {}
+        for product, price, product_url in raw_products:
+            # print(repr(price))
+            price_map[product.name] = await self.clean_price(price)
+            url_map[product.name] = product_url
+
+
         logger.info("Price map: %s", price_map)
 
         created_products = await self.product_service.bulk_create_products(raw_products)
         logger.info("Created products: %s", created_products)
 
-        new_store_products = await self.store_product_service.bulk_add_products_to_store(created_products, price_map, store_id)
+        new_store_products = await self.store_product_service.bulk_add_products_to_store(created_products, price_map, url_map, store_id)
         logger.info("New store products: %s", new_store_products)
         
         return {

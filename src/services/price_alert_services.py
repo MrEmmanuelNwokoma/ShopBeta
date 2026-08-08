@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from src.unit_of_work.unit_of_work import UnitOfWork
-from src.schemas.price_alert_schema import PriceAlertSchema, ReadPriceAlert
+from src.schemas.price_alert_schema import PriceAlertSchema, ReadPriceAlert, UpdatePriceAlert
 from src.core.exceptions import EntityNotFound, EntityAlreadyExist
 from src.events.notification_event import NotificationCreatedEvent
 from src.enums.enums import NotificationType
@@ -97,4 +97,18 @@ class PriceAlertService:
         #         )    
 
         return triggered_alerts
-            
+    
+
+    async def update_price_alert(self, price_alert_data: UpdatePriceAlert, user_id: str):
+        async with self.uow_factory as uow:
+            price_alert = await uow.price_alert_repo.get_by_id(price_alert_data.id)
+            if not price_alert:
+                raise EntityNotFound(
+                    message="Price alert not found",
+                    details={
+                        "recommendations": "Pass the correct price alert id"
+                    }
+                )
+            await uow.price_alert_repo.update(
+                
+            )

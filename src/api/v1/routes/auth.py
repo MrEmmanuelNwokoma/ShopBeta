@@ -69,11 +69,11 @@ async def set_new_password(
     response = await auth_service.change_password(user_id=current_user.id, new_password=new_password)
     return response
 
-@auth_router.post("/request-verification-token")
-async def request_verification_token(
-    email: VerificationForm,
-    auth_service: AuthService = Depends(get_auth_service)
-):
-    response = await auth_service.request_verification_token(email.email)
-    return response
+# @auth_router.post("/request-verification-token")
+# async def request_verification_token(
+#     email: VerificationForm,
+#     auth_service: AuthService = Depends(get_auth_service)
+# ):
+#     response = await auth_service.request_verification_token(email.email)
+#     return response
     

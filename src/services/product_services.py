@@ -10,7 +10,7 @@ class ProductService:
 
     async def bulk_create_products(self, raw_products: list[CreateProduct]):
         products=[]
-        for product, price in raw_products:
+        for product, price, product_url in raw_products:
             products.append(product)
             
         new_products = await self.uow_factory.product_repo.bulk_create_products(products)

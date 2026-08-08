@@ -23,7 +23,6 @@ class AuthService:
     async def register_user(self, user_data: CreateUserSchema):
         """Function for creating user"""
         async with self.uow_factory as uow:
-            token_utils = TokenUtils(uow)
             user = await uow.user_repo.get_user_by_email(email=user_data.email)
             if user:
                 raise UserAlreadyExistsError(message="Email already exists in database", details={
@@ -33,10 +32,11 @@ class AuthService:
             data['password'] = hash_password(user_data.password)
             user = User(**data)
             created_user = await self.uow_factory.user_repo.create(user)
-            verification_token = await self.request_verification_token(user.email)
+            data = await self.request_verification_token()
+            await uow.user_repo.update(id=user.id, data=data)
             await self.uow_factory.collect_event(
                     UserCreatedEvent(
-                        first_name=user.first_name, verification_token=verification_token, event_type="NEW_USER_CREATED", email=user.email
+                        first_name=user.first_name, verification_token=data["verification_token"], event_type="NEW_USER_CREATED", email=user.email
                     )
                 )
                     
@@ -88,14 +88,14 @@ class AuthService:
             )
         
     async def request_verification_token(self):            
-            token, expires_at = await self.token_utils.generate_user_verfication_token()
-            updated_data = {
-                "verification_token": token,
-                "verification_token_expires_at": expires_at
-            }
-            
-            return updated_data
-    
+        verification_token, expires_at = await self.token_utils.generate_user_verfication_token()
+        updated_data = {
+            "verification_token": verification_token,
+            "verification_token_expires_at": expires_at
+        }
+        
+        return updated_data
+
     async def resend_verification_token(self, email: EmailStr):
         async with self.uow_factory as uow:
             user = await uow.user_repo.get_user_by_email(email)
@@ -107,9 +107,11 @@ class AuthService:
                     })
             data = await self.request_verification_token()
             await uow.user_repo.update(id=user.id, data=data)
-            raise VerificationRequestedEvent(
+            raise uow.collect_event(
+                VerificationRequestedEvent(
                 first_name=user.first_name, verification_token=data["verification_token"], event_type="NEW_USER_CREATED",
                 email=user.email
+            )
             )
 
 
