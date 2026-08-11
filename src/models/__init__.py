@@ -9,3 +9,4 @@ from .user import User
 from .product_image import ProductImage
 from .notification import Notification
 from .notification_recipient import NotificationRecipient
+from .brand import Brand

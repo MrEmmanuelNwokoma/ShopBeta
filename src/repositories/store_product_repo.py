@@ -15,5 +15,8 @@ class StoreProductRepository(BaseRepository[StoreProduct]):
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
     
-    # async def get_previously_scraped_price(self, store_product_id: str):
-    #     stmt = select(self.model).where
+    async def get_product_prices(self, product_id: str):
+        stmt = select(self.model).where(self.model.product_id == product_id)
+        result = await self.session.execute(stmt)
+        return result.scalars().all()
+    

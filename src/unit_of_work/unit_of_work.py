@@ -9,6 +9,8 @@ from src.repositories.price_histories_repo import PriceHistoryRepository
 from src.repositories.price_alert_repo import PriceAlertRepository
 from src.repositories.category_repo import CategoryRepository
 from src.repositories.favorites_repo import FavoriteRepository
+from src.repositories.brand_repo import BrandRepository
+from src.repositories.brand_signal_repo import BrandSignalRepository
 from src.repositories.device_token_repo import DeviceTokenRepository
 
 
@@ -27,6 +29,8 @@ class UnitOfWork:
         self.category_repo = CategoryRepository(session)
         self.favorite_repo = FavoriteRepository(session)
         self.device_token_repo = DeviceTokenRepository(session)
+        self.brand_repo = BrandRepository(session)
+        self.brand_signal_repo = BrandSignalRepository(session)
         
     async def collect_event(self, event: DomainEvent):
         self._pending_event.append(event)

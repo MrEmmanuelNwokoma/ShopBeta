@@ -13,16 +13,16 @@ from src.core.pydantic_configuration import config
 @celery_app.task(bind=True, name="add_product_to_store")
 def add_product_to_store(self):
     async def _run():
-        # async with db.get_session() as session:
-        #     uow_factory = UnitOfWork(session)
-        #     async with uow_factory:
-        #         scrape_service = ScrapeService(uow_factory)
-        #         await scrape_service.add_store_products(jumia_scraper, "Jumia", config.JUMIA_URL)
-
         async with db.get_session() as session:
             uow_factory = UnitOfWork(session)
             async with uow_factory:
                 scrape_service = ScrapeService(uow_factory)
-                await scrape_service.add_store_products(slot_scraper, "Slot", config.SLOT_URL)
+                await scrape_service.add_store_products(jumia_scraper, "Jumia", config.JUMIA_URL)
+
+        # async with db.get_session() as session:
+        #     uow_factory = UnitOfWork(session)
+        #     async with uow_factory:
+        #         scrape_service = ScrapeService(uow_factory)
+        #         await scrape_service.add_store_products(slot_scraper, "Slot", config.SLOT_URL)
     
     asyncio.run(_run())

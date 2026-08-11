@@ -46,15 +46,13 @@ class SlotScraper:
 
 
                     product_data.append(
-                        (
-                            CreateProduct(
-                                name=name,
-                                category_id=category_id
-                            ),
-                            price,
-                            product_url
+                            {
+                                "name": name,
+                                "category_id": category_id,
+                                "price": price,
+                                "product_url": product_url,
+                            }
                         )
-                    )
                 try:
                     next_page = wait.until(
                     Ec.element_to_be_clickable(

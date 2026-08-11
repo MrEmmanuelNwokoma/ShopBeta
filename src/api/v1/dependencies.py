@@ -10,6 +10,7 @@ from src.services.price_history_service import PriceHistoryService
 from src.services.store_product_services import StoreProductService
 from src.services.price_alert_services import PriceAlertService
 from src.services.favorite_services import FavoriteService
+from src.services.category_services import CategoryService
 from src.auth.jwt import decode_access_token
 from src.schemas.user_schema import UserProfile
 from src.storage import db
@@ -41,6 +42,16 @@ def get_price_alert_service(uow: UnitOfWork = Depends(get_uow)):
 
 def get_favorite_service(uow: UnitOfWork = Depends(get_uow)):
     return FavoriteService(uow)
+
+def get_category_service(uow: UnitOfWork = Depends(get_uow)):
+    return CategoryService(uow)
+
+def get_store_product_service(uow: UnitOfWork = Depends(get_uow)):
+    return StoreProductService(
+        uow_factory=uow,
+        price_alert=get_price_alert_service()
+    )
+
 
 async def get_current_user(
     token: str = Depends(oauth2_scheme),

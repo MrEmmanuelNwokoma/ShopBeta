@@ -1,5 +1,6 @@
 from src.unit_of_work.unit_of_work import UnitOfWork
 from src.schemas.product_schema import CreateProduct, ReadProduct, UpdateProduct
+from src.models.product import Product
 from src.enums.enums import UserRole
 from src.core.exceptions import EntityNotFound, PermissionDenied
 from src.models.user import User
@@ -8,12 +9,8 @@ class ProductService:
     def __init__(self, uow_factory: UnitOfWork):
         self.uow_factory = uow_factory
 
-    async def bulk_create_products(self, raw_products: list[CreateProduct]):
-        products=[]
-        for product, price, product_url in raw_products:
-            products.append(product)
-            
-        new_products = await self.uow_factory.product_repo.bulk_create_products(products)
+    async def bulk_create_products(self, enriched_products: list[dict]):        
+        new_products = await self.uow_factory.product_repo.bulk_create_products(enriched_products)
         return new_products
         
         

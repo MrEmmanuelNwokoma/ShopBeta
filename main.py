@@ -9,6 +9,7 @@ from src.events.bootstrap import bootstrap_event_initializer
 from src.api.v1.routes.price_history import price_history_router
 from src.api.v1.routes.price_alert import price_alert_router
 from src.api.v1.routes.favorite import favorite_router
+from src.api.v1.routes.category import category_router
 
 
 @asynccontextmanager
@@ -50,3 +51,5 @@ app.include_router(price_history_router)
 app.include_router(price_alert_router)
 
 app.include_router(favorite_router)
+
+app.include_router(category_router)
