@@ -18,3 +18,21 @@ class PriceHistoryRepository(BaseRepository[PriceHistory]):
         stmt = select(self.model).where(self.model.store_product_id == store_product_id)
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
+
+    async def bulk_create_price_history(
+    self, payloads: list[CreatePriceHistory]
+) -> list[PriceHistory]:
+        
+        if not payloads:
+            return []
+
+        records = [
+            PriceHistory(
+                store_product_id=p.store_product_id,
+                price=p.price,
+            )
+            for p in payloads
+        ]
+        await self.bulk_create(records)
+      
+        return records

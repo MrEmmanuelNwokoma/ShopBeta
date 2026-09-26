@@ -1,5 +1,5 @@
 from src.unit_of_work.unit_of_work import UnitOfWork
-from src.schemas.product_schema import CreateProduct, ReadProduct, UpdateProduct
+from src.schemas.product_schema import CreateProduct, ReadProduct
 from src.models.product import Product
 from src.enums.enums import UserRole
 from src.core.exceptions import EntityNotFound, PermissionDenied
@@ -16,11 +16,11 @@ class ProductService:
         
     async def get_single_product(self, product_id: str):
         async with self.uow_factory:
-            product = await self.uow_factory.product_repo.get_by_id(product_id)
+            product = await self.uow_factory.product_repo.get_single_product(product_id)
             return {
                 "status": "success",
                 "message": "Product successfully created",
-                "data": ReadProduct.model_validate(product)
+                "data": product
             }
     
     async def get_multiple_products(self, product_ids: list[str]):
@@ -29,7 +29,7 @@ class ProductService:
             return {
                 "status": "success",
                 "message": "Products successfully retrieved",
-                "data": [ReadProduct.model_validate(product) for product in products]
+                "data": products
             }
     
     async def get_products_by_category(self, category_id: str):
@@ -43,30 +43,30 @@ class ProductService:
                 "data": [ReadProduct.model_validate(product) for product in products]
             }
 
-    async def update_product(self, current_user: User, product_id: str, product_data: UpdateProduct):
-        async with self.uow_factory:
-            if current_user.role != UserRole.ADMIN:
-                raise PermissionDenied(
-                    message="You do not have permission to update product",
-                    details={
-                        "recommendation": "Make sure user is an admin"
-                    }
-                )
-            product = await self.uow_factory.product_repo.get_by_id(product_id)
-            if not product:
-                raise EntityNotFound(
-                    message="Product not found",
-                    details={
-                        "recommendation": "Make sure you pass the right product_id"
-                    }
-                )
+    # async def update_product(self, current_user: User, product_id: str, product_data: UpdateProduct):
+    #     async with self.uow_factory:
+    #         if current_user.role != UserRole.ADMIN:
+    #             raise PermissionDenied(
+    #                 message="You do not have permission to update product",
+    #                 details={
+    #                     "recommendation": "Make sure user is an admin"
+    #                 }
+    #             )
+    #         product = await self.uow_factory.product_repo.get_by_id(product_id)
+    #         if not product:
+    #             raise EntityNotFound(
+    #                 message="Product not found",
+    #                 details={
+    #                     "recommendation": "Make sure you pass the right product_id"
+    #                 }
+    #             )
             
-            updated_product = await self.uow_factory.product_repo.update_product(product_id, product_data)
-            return {
-                "status": "success",
-                "message": "Product successfully updated",
-                "data": ReadProduct.model_validate(updated_product)
-            }
+    #         updated_product = await self.uow_factory.product_repo.update_product(product_id, product_data)
+    #         return {
+    #             "status": "success",
+    #             "message": "Product successfully updated",
+    #             "data": ReadProduct.model_validate(updated_product)
+    #         }
     
     async def delete_product(self, current_user: User, product_id: str):
         async with self.uow_factory:
@@ -118,4 +118,21 @@ class ProductService:
                 "message": "Products successfully deleted",
                 "total_products_deleted": deleted_products
             }
-    
+
+    async def get_all_products(self):
+        async with self.uow_factory:
+            products = await self.uow_factory.product_repo.get_all_products()
+            return {
+                "status": "success",
+                "message": "Products successfully retrieved",
+                "data": [ReadProduct.model_validate(product) for product in products]
+            }
+
+    async def compare_stores(self, product_id: str):
+        async with self.uow_factory:
+            store_products = await self.uow_factory.product_repo.compare_stores(product_id)
+            return {
+                "status": "success",
+                "message": "Products successfully retrieved",
+                "data": store_products
+            }

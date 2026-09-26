@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from src.models.price_alert import PriceAlert
     from src.models.price_history import PriceHistory
     from src.models.favorites import Favorite
+    from models.store_product_images import StoreProductImage
 
 
 class StoreProduct(Basemodel, Base):
@@ -18,6 +19,7 @@ class StoreProduct(Basemodel, Base):
 
     store_id: Mapped[str] = mapped_column(ForeignKey("stores.id"), nullable=False)
     product_id: Mapped[str] = mapped_column(ForeignKey("products.id"), nullable=False)
+    name: Mapped[str] = mapped_column(nullable=False)
     price: Mapped[Decimal] = mapped_column(nullable=False)
     currency: Mapped[str] = mapped_column(String(3), nullable=False)
     product_url: Mapped[str] = mapped_column(nullable=False)
@@ -29,3 +31,4 @@ class StoreProduct(Basemodel, Base):
     product: Mapped["Product"] = relationship(back_populates="stores")
     price_histories: Mapped[list["PriceHistory"]] = relationship(back_populates="store_product", cascade="all, delete-orphan")
     favorites: Mapped[list["Favorite"]] = relationship(back_populates="store_product", cascade="all, delete-orphan")
+    store_product_images: Mapped[list["StoreProductImage"]] = relationship(back_populates="store_product", cascade="all, delete-orphan")

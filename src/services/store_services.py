@@ -67,18 +67,33 @@ class StoreService:
                 "data": ReadStore.model_validate(updated_store)
             }
     
-    async def deactivate_store(self, current_user: User, store_id: str):
+    async def deactivate_store(self,  store_id: str):
         async with self.uow_factory:
-            if current_user.role != UserRole.ADMIN:
-                raise PermissionDenied(
-                    details={
-                        "recommendations": "Make sure you are an admin"
-                    }
-                )
+            # if current_user.role != UserRole.ADMIN:
+            #     raise PermissionDenied(
+            #         details={
+            #             "recommendations": "Make sure you are an admin"
+            #         }
+            #     )
             
-            await self.uow_factory.store_repo.delete(store_id, soft=True)
+            await self.uow_factory.store_repo.delete(store_id)
             return {
                 "status": "success",
                 "message": "Store successfully deactivated",
+            }
+
+    async def activate_store(self, store_id: str):
+        async with self.uow_factory:
+            # if current_user.role != UserRole.ADMIN:
+            #     raise PermissionDenied(
+            #         details={
+            #             "recommendations": "Make sure you are an admin"
+            #         }
+            #     )
+            
+            await self.uow_factory.store_repo.activate_store(store_id)
+            return {
+                "status": "success",
+                "message": "Store successfully activated",
             }
     

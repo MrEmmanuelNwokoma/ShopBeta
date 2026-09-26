@@ -1,12 +1,12 @@
 CATEGORIES = [
     {"name": "Smartphone"},
     {"name": "Laptop"},
-    # {"name": "Tablet"},
-    # {"name": "SmartWatch"},
-    # {"name": "Headphones"},
-    # {"name": "Speakers"},
-    # {"name": "Monitor"},
-    # {"name": "Gaming console"}
+    {"name": "Tablet"},
+    {"name": "SmartWatch"},
+    {"name": "Headphones"},
+    {"name": "Speakers"},
+    {"name": "Monitor"},
+    {"name": "Gaming console"}
 ]
 
 STORES = [
@@ -25,7 +25,7 @@ STORES = [
     {
         "name": "Konga",
         "website_url": "https://www.konga.com",
-        "is_active": False,
+        "is_active": True,
         "supports_api": False
     }
 ]
@@ -81,6 +81,7 @@ CANONICAL_BRANDS = [
     {"name": "atouch"},
     {"name": "blackberry"},
     {"name": "blackview"},
+    {"name": "c idea"},
     {"name": "cubot"},
     {"name": "doogee"},
     {"name": "fossibot"},
@@ -94,9 +95,11 @@ CANONICAL_BRANDS = [
     {"name": "innjoo"},
     {"name": "itel"},
     {"name": "lenovo"},
+    {"name": "lesia"},
     {"name": "lg"},
     {"name": "meizu"},
     {"name": "microsoft"},
+    {"name": "mktel"},
     {"name": "motorola"},
     {"name": "nokia"},
     {"name": "nothing"},
@@ -107,8 +110,11 @@ CANONICAL_BRANDS = [
     {"name": "philips"},
     {"name": "poco"},
     {"name": "realme"},
+    {"name": "redbeat"},
     {"name": "redmi"},
+    {"name": "ruioo"},
     {"name": "samsung"},
+    {"name": "sunelan"},
     {"name": "tecno"},
     {"name": "umidigi"},
     {"name": "vivo"},

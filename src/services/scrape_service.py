@@ -8,14 +8,10 @@ from src.services.product_services import ProductService
 from src.services.store_services import StoreService
 from src.unit_of_work.unit_of_work import UnitOfWork
 from src.core.pydantic_configuration import config
-from src.services.category_services import CategoryService
-from src.services.product_services import ProductService
-from src.services.store_product_services import StoreProductService
-from src.services.store_services import StoreService
 from src.services.price_alert_services import PriceAlertService
 from src.services.device_token import DeviceTokenService
 from src.scrapers.base_scraper import BaseScraper
-from src.utils.text_utils import extract_model, extract_ram, extract_storage, identify_brand
+from src.client.gemini_client import clean_products
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -32,25 +28,24 @@ class ScrapeService:
         self.store_product_service = StoreProductService(uow_factory, self.price_alert)
     
     async def clean_price(self, price: str):
-        price = price.split("-")[0]  # take the first price if range
-        # print(repr(price.split("-")[0]))
+        price = price.split("-")[0]
         return Decimal(price.replace("₦", "").replace(",", "").strip())
 
     async def add_store_products(
-    self, 
-    scraper: BaseScraper, 
-    store_name: str, 
-    category_urls: dict
-):
+        self, 
+        scraper: BaseScraper, 
+        store_name: str, 
+        category_urls: dict
+    ):
         """
-        Scrape products from a store, identify brands, create products, and link them to store.
-        Flow: scrape → identify brands → create products → link to store
+        Scrape products from a store, enrich with Gemini, create products, and link them to store.
+        Flow: scrape → enrich with Gemini → create products → link to store
         """
-        # Pre-fetch dependencies
         brands = await self.uow_factory.brand_repo.get_all()
-        brand_signals = await self.uow_factory.brand_signal_repo.get_all()
         store = await self.uow_factory.store_repo.get_by_name(store_name)
         categories = await self.category_service.get_categories()
+        for category in categories:
+            print(category)
         
         if not store:
             raise ValueError(f"Store '{store_name}' not found")
@@ -60,7 +55,7 @@ class ScrapeService:
         # Map category names to URLs
         mapped_urls = {
             category.id: category_urls[category.name] 
-            for category in categories
+            for category in categories["data"]
             if category.name in category_urls
         }
         
@@ -69,7 +64,7 @@ class ScrapeService:
         
         logger.info(f"Scraping {store_name} from {len(mapped_urls)} categories")
         
-        # Scrape raw products
+
         raw_products = scraper.scrape_store_products(mapped_urls)
         
         if not raw_products:
@@ -78,44 +73,75 @@ class ScrapeService:
         
         logger.info(f"Scraped {len(raw_products)} products from {store_name}")
         
-        # Enrich products with brand info and extracted attributes
+        raw_map = {product["name"]: product for product in raw_products}
+        
+
+        cleaned_products = await clean_products(raw_products)
+        
+        # Build brand lookup map from DB
+        brand_map = {b.name.lower(): b for b in brands}
+        
+    
         enriched_products = []
         skipped_count = 0
         
-        for product_dict in raw_products:
-            brand = identify_brand(product_dict, brands, brand_signals)
+        for item in cleaned_products:
+            # Skip if model is null
+            if not item.get("model"):
+                logger.warning(f"No model extracted for: {item.get('original_name')}")
+                skipped_count += 1
+                continue
+
+            # Skip if brand is null
+            if not item.get("brand"):
+                logger.warning(f"No brand extracted for: {item.get('original_name')}")
+                skipped_count += 1
+                continue
+
+            # Look up brand from the built map
+            brand = brand_map.get(item["brand"].lower())
             
             if not brand:
-                logger.warning(f"No brand matched for: {product_dict['name']}")
+                logger.warning(f"No brand found in DB for: {item['brand']}")
                 skipped_count += 1
                 continue
             
-            ram = extract_ram(product_dict)
-            storage = extract_storage(product_dict)
-            model = extract_model(product_dict, brand, ram, storage)
-            clean_price = await self.clean_price(product_dict["price"])
+            # Get original raw product using original_name
+            raw = raw_map.get(item["original_name"])
+            
+            if not raw:
+                logger.warning(f"Could not match enriched product back to raw product: {item['original_name']}")
+                skipped_count += 1
+                continue
+            
+            # Clean price
+            clean_price = await self.clean_price(raw["price"])
             
             enriched_products.append({
                 "brand_id": brand.id,
-                "ram": ram,
-                "storage": storage,
-                "model": model,
-                "product_url": product_dict["product_url"],
-                "category_id": product_dict["category_id"],
+                "model": item["model"],
+                "ram": item.get("ram"),
+                "name": item.get("original_name"),
+                "storage": item.get("storage"),
+                "product_url": raw["product_url"],
+                "category_id": raw["category_id"],
                 "price": clean_price,
+                "image_url": raw["image_url"]
             })
 
         if skipped_count > 0:
-            logger.warning(f"Skipped {skipped_count} products with no matching brand")
+            logger.warning(f"Skipped {skipped_count} products")
 
         if not enriched_products:
-            raise ValueError(f"No products could be enriched with brand info from {store_name}")
+            raise ValueError(f"No products could be enriched from {store_name}")
 
-        # Create products (bulk)
+        
         created_products = await self.product_service.bulk_create_products(enriched_products)
         logger.info(f"Created {len(created_products)} unique products")
+        
+        print(store_id)
 
-        # Link to store (bulk)
+        
         new_store_products = await self.store_product_service.bulk_add_products_to_store(
             created_products,
             enriched_products,
@@ -134,4 +160,3 @@ class ScrapeService:
             "total_linked": len(new_store_products),
             "data": new_store_products
         }
-        

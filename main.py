@@ -10,7 +10,8 @@ from src.api.v1.routes.price_history import price_history_router
 from src.api.v1.routes.price_alert import price_alert_router
 from src.api.v1.routes.favorite import favorite_router
 from src.api.v1.routes.category import category_router
-
+from src.api.v1.routes.product import product_router
+from src.api.v1.routes.store import store_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -53,3 +54,7 @@ app.include_router(price_alert_router)
 app.include_router(favorite_router)
 
 app.include_router(category_router)
+
+app.include_router(product_router)
+
+app.include_router(store_router)

@@ -52,6 +52,12 @@ def get_store_product_service(uow: UnitOfWork = Depends(get_uow)):
         price_alert=get_price_alert_service()
     )
 
+def get_store_service(uow: UnitOfWork = Depends(get_uow)):
+    return StoreService(uow)
+
+def get_product_service(uow: UnitOfWork = Depends(get_uow)):
+    return ProductService(uow)
+
 
 async def get_current_user(
     token: str = Depends(oauth2_scheme),

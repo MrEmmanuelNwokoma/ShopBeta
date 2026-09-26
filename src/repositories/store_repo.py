@@ -32,6 +32,15 @@ class StoreRepository(BaseRepository[Store]):
         data["website_url"] = str(data["website_url"])
         updated_store = await self.update(id=store_id, data=data)
         return updated_store
+
+    async def activate_store(self, store_id: str):
+        store = await self.get_by_id(store_id)
+        if not store:
+            return None
+        store.is_active = True
+        await self.session.commit()
+        await self.session.refresh(store)
+        return store
    
     
     

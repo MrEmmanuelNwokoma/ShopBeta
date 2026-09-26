@@ -6,7 +6,7 @@ from .price_history import PriceHistory
 from .store import Store
 from .store_product import StoreProduct
 from .user import User
-from .product_image import ProductImage
+from .store_product_images import StoreProductImage
 from .notification import Notification
 from .notification_recipient import NotificationRecipient
 from .brand import Brand

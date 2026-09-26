@@ -13,5 +13,5 @@ class Store(Basemodel, Base):
 
 
 
-    products: Mapped[list["StoreProduct"]] = relationship(back_populates="store")
+    products: Mapped[list["StoreProduct"]] = relationship(back_populates="store", cascade="all, delete-orphan")
      

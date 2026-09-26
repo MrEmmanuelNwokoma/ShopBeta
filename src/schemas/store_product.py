@@ -3,7 +3,6 @@ Pydantic schemas for validation
 """
 from pydantic import BaseModel, ConfigDict, HttpUrl
 from decimal import Decimal
-from src.schemas.product_schema import ReadProduct
 from src.schemas.store_schema import ReadStore
 
 
@@ -17,8 +16,15 @@ class BaseStoreProduct(BaseModel):
 
 class ReadStoreProduct(BaseStoreProduct):
     """Schema for reading store_product"""
-    store: ReadStore
-    product: ReadProduct
+    id: str
+    name: str
+    price: float
+    currency: str
+    product_url: str
+    store: ReadStore  # The nested store details (e.g., Jumia, Konga, Slot)
+    
+
+    model_config = ConfigDict(from_attributes=True)
 
     model_config = ConfigDict(from_attributes=True)
 

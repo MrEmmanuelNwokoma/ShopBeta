@@ -1,5 +1,5 @@
 from src.unit_of_work.unit_of_work import UnitOfWork
-from src.models.category import Category
+
 
 class CategoryService:
     def __init__(self, uow_factory: UnitOfWork):
@@ -9,10 +9,22 @@ class CategoryService:
             categories = await self.uow_factory.category_repo.get_categories()
             if not categories:
                 return []
-            return categories
+            return {
+                "status": "success",
+                "message": "Categories successfully retrieved",
+                "data": categories
+            }
     
-    async def get_category_by_name(self, name: str):
-        async with self.uow_factory:
-            category = await self.uow_factory.category_repo.get_category_by_name(name)
-            return category
-    
+    async def get_category_products(self, id: str):
+        category_products = await self.uow_factory.category_repo.get_category_products(id)
+        if not category_products:
+            return {
+                "status": "success",
+                "message": "No products found for this category",
+                "data": []
+            }
+        return {
+            "status": "success",
+            "message": "Products successfully retrieved for this category",
+            "data": category_products
+        }

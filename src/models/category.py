@@ -18,3 +18,19 @@ class Category(Basemodel, Base):
     
 
     products: Mapped[list["Product"]] = relationship(back_populates="category", cascade="all, delete-orphan")
+
+
+
+    @property
+    def category_image(self):
+        if self.products:
+            for product in self.products:
+                if product.stores:
+                    for store_product in product.stores:
+                        if store_product.store_product_images:
+                            return store_product.store_product_images[0].store_product_image_url
+    
+    @property
+    def product_count(self):
+        if self.products:
+            return len(self.products)
