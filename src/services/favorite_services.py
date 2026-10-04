@@ -25,7 +25,14 @@ class FavoriteService:
                         "recommendation": "Pass the correct store product id"
                     }
                 ) 
-            
+            exisiting_favorite = await self.uow_factory.favorite_repo.get_by_store_product_id(favorite_data.store_product_id)
+            if exisiting_favorite:
+                raise PermissionDenied(
+                    message="Favorite already exists",
+                    details={
+                        "recommendation": "This product already exist in your favorites"
+                    }
+                )
             favorite = await self.uow_factory.favorite_repo.create_favorites(favorite_data, user_id)
             return favorite
         
@@ -52,3 +59,16 @@ class FavoriteService:
                 "status": "success",
                 "message": "Favorite deleted successfully"
             }
+
+    async def get_user_favorites(self, user_id: str):
+        async with self.uow_factory:
+            user = await self.uow_factory.user_repo.get_by_id(user_id)
+            if not user:
+                raise EntityNotFound(
+                    message="User not found",
+                    details={
+                        "recommendation": "Pass the correct user id"
+                    }
+                )
+            favorites = await self.uow_factory.favorite_repo.get_user_favorites(user_id)
+            return favorites

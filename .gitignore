@@ -8,7 +8,7 @@ wheels/
 /.env
 /.venv
 /firebase_credentials.json
-my_database.db
+# my_database.db
 celerybeat-schedule.bak
 celerybeat-schedule.dat
 celerybeat-schedule.dir

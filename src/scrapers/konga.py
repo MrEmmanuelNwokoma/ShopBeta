@@ -9,7 +9,7 @@ from src.schemas.product_schema import CreateProduct
 from src.scrapers.base_scraper import BaseScraper
 from src.core.pydantic_configuration import config
 
-MAX_PAGES = 20
+MAX_PAGES = 30
 
 
 class KongaScraper(BaseScraper):

@@ -11,7 +11,7 @@ from src.scrapers.base_scraper import BaseScraper
 # from src.schemas.store_schema import CreateStore
 from src.core.pydantic_configuration import config
 
-MAX_PAGES = 20
+MAX_PAGES =30
 
 
 class JumiaScraper(BaseScraper):
@@ -78,6 +78,14 @@ class JumiaScraper(BaseScraper):
                                 By.CSS_SELECTOR, "a.core"
                             ).get_attribute("href")
 
+                            # --- EXTRACT IMAGE URL ---
+                            img_element = product.find_element(
+                                By.CSS_SELECTOR, "img.img"
+                            )
+                            # Jumia often lazy-loads images into data-src, fallback to src
+                            image_url = img_element.get_attribute("data-src") or img_element.get_attribute("src")
+                            # -------------------------
+
                         except Exception:
                             continue
 
@@ -89,13 +97,14 @@ class JumiaScraper(BaseScraper):
                             continue
                         seen_urls.add(product_url)
 
-                        # Raw scraped data only
+                        # Raw scraped data including image URL
                         product_data.append(
                             {
                                 "name": name,
                                 "category_id": category_id,
                                 "price": price,
                                 "product_url": product_url,
+                                "image_url": image_url, # Added image URL field
                             }
                         )
                         page_product_count += 1

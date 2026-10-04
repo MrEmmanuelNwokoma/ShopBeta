@@ -17,8 +17,8 @@ from src.models.user import User
 from src.models.brand import Brand
 
 async def seed_data():
-    await db.drop_tables()
-    await db.create_tables()
+    # await db.drop_tables()
+    # await db.create_tables()
 
     async with db.get_session() as session:
         # uow = UnitOfWork(session)

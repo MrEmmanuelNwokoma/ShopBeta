@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 from src.schemas.product_schema import CreateProduct
 from src.core.pydantic_configuration import config
 
-MAX_PAGES = 20
+MAX_PAGES = 30
 
 
 class SlotScraper:

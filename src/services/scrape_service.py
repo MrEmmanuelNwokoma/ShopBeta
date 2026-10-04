@@ -72,11 +72,37 @@ class ScrapeService:
             return {"status": "No products found", "data": []}
         
         logger.info(f"Scraped {len(raw_products)} products from {store_name}")
+        seen_names = set()
+        unique_raw_products = []
+        for product in raw_products:
+            name = product.get("name") or product.get("original_name")
+            if name and name not in seen_names:
+                seen_names.add(name)
+                unique_raw_products.append(product)
+                
+        raw_products = unique_raw_products
+        logger.info(f"Filtered down to {len(raw_products)} unique products for store: {store_name}")
         
         raw_map = {product["name"]: product for product in raw_products}
         
 
         cleaned_products = await clean_products(raw_products)
+
+        # Gemini can return the same product more than once in its output
+        # (e.g. from the "extra data" / trailing-content issue, or chunk overlap).
+        # raw_products was already deduped above, so any duplicate original_name
+        # here was introduced by Gemini itself and needs its own check.
+        seen_original_names = set()
+        deduped_cleaned = []
+        for item in cleaned_products:
+            name = item.get("original_name")
+            if name in seen_original_names:
+                logger.warning(f"Duplicate original_name from Gemini output: {name}")
+                continue
+            seen_original_names.add(name)
+            deduped_cleaned.append(item)
+        deduped_products = deduped_cleaned
+        logger.info(f"Deduped Gemini output down to {len(deduped_products)} products")
         
         # Build brand lookup map from DB
         brand_map = {b.name.lower(): b for b in brands}
@@ -85,7 +111,8 @@ class ScrapeService:
         enriched_products = []
         skipped_count = 0
         
-        for item in cleaned_products:
+        for item in deduped_products:
+            print(item)
             # Skip if model is null
             if not item.get("model"):
                 logger.warning(f"No model extracted for: {item.get('original_name')}")

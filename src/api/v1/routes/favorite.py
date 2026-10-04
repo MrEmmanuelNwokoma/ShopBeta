@@ -18,3 +18,19 @@ async def create_favorite(
     response = await favorite_service.create_favorite(favorite_data, user_id = user.id)
     return response
 
+@favorite_router.delete("/{favorite_id}")
+async def delete_favorite(
+    favorite_id: str,
+    user: User = Depends(get_current_user),
+    favorite_service: FavoriteService = Depends(get_favorite_service)
+):
+    response = await favorite_service.delete_favorites(favorite_id, user_id=user.id)
+    return response
+
+@favorite_router.get("/")
+async def get_user_favorites(
+    user: User = Depends(get_current_user),
+    favorite_service: FavoriteService = Depends(get_favorite_service)
+):
+    favorites = await favorite_service.get_user_favorites(user.id)
+    return favorites

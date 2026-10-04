@@ -89,6 +89,9 @@ class ProductRepository(BaseRepository[Product]):
             resolved_map.extend(new_products)
         
         return resolved_map
+    
+
+    
     async def get_all_products(self):
         stmt = select(self.model).options(
             selectinload(self.model.stores).joinedload(StoreProduct.store),

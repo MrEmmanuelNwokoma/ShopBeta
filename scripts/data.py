@@ -70,6 +70,7 @@ ADMIN_USERS = [
         "last_name": "Nwokoma",
         "phone_number": "09038457341",
         "email": "emmanuelnwokoma324@gmail.com",
+        "is_email_verified": True,
         "password": "strings"
     }
 ]
