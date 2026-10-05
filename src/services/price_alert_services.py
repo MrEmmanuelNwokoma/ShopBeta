@@ -42,7 +42,7 @@ class PriceAlertService:
             return ReadPriceAlert(
                 id=new_price_alert.id,
                 store_product_id=store_product_id,
-                product_name=product.name,
+                store_product_name=store_product.name,
                 store_name=store.name,
                 target_price=new_price_alert.target_price
             )
@@ -112,3 +112,8 @@ class PriceAlertService:
             await uow.price_alert_repo.update(
                 
             )
+    
+    async def get_user_price_alerts(self, user_id: str):
+        async with self.uow_factory as uow:
+            price_alerts = await uow.price_alert_repo.get_user_price_alerts(user_id)
+            return price_alerts

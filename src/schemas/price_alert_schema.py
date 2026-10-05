@@ -1,7 +1,7 @@
 """
 Pydantic schema for validation
 """
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from decimal import Decimal
 from src.schemas.store_product import ReadStoreProduct
 
@@ -9,7 +9,7 @@ from src.schemas.store_product import ReadStoreProduct
 
 class BasePriceAlert(BaseModel):
     """Parent store schema which other store schemas inherit"""
-    target_price: Decimal
+    target_price: Decimal = Field(gt=0)
     
 
 
@@ -25,7 +25,7 @@ class ReadPriceAlert(BasePriceAlert):
     """Schema for reading price_alert"""
     id: str
     store_product_id: str
-    product_name: str
+    store_product_name: str
     store_name: str
 
    

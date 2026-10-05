@@ -1,8 +1,10 @@
 from typing import Type
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload, joinedload
 from src.repositories.base import BaseRepository
 from src.models.price_alert import PriceAlert
+from src.models.store_product import StoreProduct
 from src.schemas.price_alert_schema import PriceAlertSchema
 
 
@@ -17,7 +19,14 @@ class PriceAlertRepository(BaseRepository[PriceAlert]):
         return new_price_alert
     
     async def get_user_price_alerts(self, user_id: str):
-        stmt = select(self.model).where(self.model.user_id == user_id)
+        stmt = (
+            select(self.model)
+            .where(self.model.user_id == user_id)
+            .options(
+                selectinload(self.model.store_product)
+                .selectinload(StoreProduct.store)
+            )
+        )
         result = await self.session.execute(stmt)
         return result.scalars().all()
     
