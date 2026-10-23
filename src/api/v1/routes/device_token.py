@@ -5,7 +5,7 @@ from src.services.device_token import DeviceTokenService
 
 
 device_token_router = APIRouter(
-    prefix="api/v1/device-token", tags=["Device Tokens"]
+    prefix="/api/v1/device_tokens", tags=["Device Tokens"]
 )
 
 @device_token_router.post("/")
