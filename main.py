@@ -15,6 +15,7 @@ from src.api.v1.routes.product import product_router
 from src.api.v1.routes.store import store_router
 from src.api.v1.routes.store_product import store_product_router
 from src.api.v1.routes.notification_recipients import notification_recipient_router
+from src.api.v1.routes.device_token import device_token_router
 
 
 @asynccontextmanager
@@ -70,3 +71,5 @@ app.include_router(store_router)
 app.include_router(store_product_router)
 
 app.include_router(notification_recipient_router)
+
+app.include_router(device_token_router)

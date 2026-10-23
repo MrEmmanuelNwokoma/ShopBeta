@@ -12,6 +12,7 @@ from src.services.price_alert_services import PriceAlertService
 from src.services.favorite_services import FavoriteService
 from src.services.category_services import CategoryService
 from src.services.notification_recipients import NotificationRecipientService
+from src.services.device_token import DeviceTokenService
 from src.auth.jwt import decode_access_token
 from src.schemas.user_schema import UserProfile
 from src.storage import db
@@ -64,6 +65,9 @@ def get_product_service(uow: UnitOfWork = Depends(get_uow)):
 
 def get_notification_recipient_service(uow: UnitOfWork = Depends(get_uow)):
     return NotificationRecipientService(uow)
+
+def get_device_token_service(uow: UnitOfWork = Depends(get_uow)):
+    return DeviceTokenService(uow)
 
 async def get_current_user(
     token: str = Depends(oauth2_scheme),

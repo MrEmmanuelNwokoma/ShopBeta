@@ -9,8 +9,8 @@ class DeviceTokenRepository(BaseRepository[DeviceToken]):
     def __init__(self, session: AsyncSession):
         super().__init__(DeviceToken, session)
 
-    async def add_device_token(self, device_data: AddDeviceToken):
-        data = DeviceToken(**device_data.model_dump())
+    async def add_device_token(self, device_data: AddDeviceToken, user_id: str):
+        data = DeviceToken(**device_data.model_dump(), user_id=user_id)
         device = await self.create(data)
         return device
     
