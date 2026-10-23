@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from src.api.v1.dependencies import get_price_alert_service, get_current_user
 from src.services.price_alert_services import PriceAlertService
-from src.schemas.price_alert_schema import PriceAlertSchema
+from src.schemas.price_alert_schema import PriceAlertSchema, UpdatePriceAlert
 from src.models.user import User
 
 price_alert_router = APIRouter(prefix="/api/v1/price_alerts")
@@ -14,6 +14,18 @@ async def create_price_alert(
 ):
     response = await price_alert_service.create_price_alert(price_alert_data=price_alert_data, user_id=user.id)
     return response
+
+
+@price_alert_router.put("/")
+async def update_price_alert(
+    
+    price_alert_data: UpdatePriceAlert,
+    user: User = Depends(get_current_user),
+    price_alert_service: PriceAlertService = Depends(get_price_alert_service)
+):
+    response = await price_alert_service.update_price_alert(price_alert_data=price_alert_data, user_id=user.id)
+    return response
+
 
 @price_alert_router.get("/")
 async def get_user_price_alerts(

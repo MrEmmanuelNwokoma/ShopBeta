@@ -12,6 +12,9 @@ from src.repositories.favorites_repo import FavoriteRepository
 from src.repositories.brand_repo import BrandRepository
 from src.repositories.brand_signal_repo import BrandSignalRepository
 from src.repositories.device_token_repo import DeviceTokenRepository
+from src.repositories.notification_repo import NotificationRepository
+from src.repositories.notification_recipient_repo import NotificationRecipientRepository    
+
 
 
 class UnitOfWork:
@@ -31,6 +34,8 @@ class UnitOfWork:
         self.device_token_repo = DeviceTokenRepository(session)
         self.brand_repo = BrandRepository(session)
         self.brand_signal_repo = BrandSignalRepository(session)
+        self.notification_repo = NotificationRepository(session)
+        self.notification_recipient_repo = NotificationRecipientRepository(session)
         
     async def collect_event(self, event: DomainEvent):
         self._pending_event.append(event)

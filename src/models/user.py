@@ -45,9 +45,9 @@ class User(Basemodel, Base):
         cascade="all, delete-orphan"
     )
 
-    sent_notifications: Mapped[list["Notification"]] = relationship(
-        back_populates="sender"
-    )
+    # sent_notifications: Mapped[list["Notification"]] = relationship(
+    #     back_populates="sender"
+    # )
 
     # notification_recipients: Mapped[list["NotificationRecipient"]] = relationship(back_populates="user")
     device_tokens: Mapped[list["DeviceToken"]] = relationship(

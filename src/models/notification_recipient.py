@@ -16,11 +16,11 @@ class NotificationRecipient(Basemodel, Base):
 
     recipient_id: Mapped[str] = mapped_column(ForeignKey("users.id"), nullable=False)
     notification_id: Mapped[str] = mapped_column(ForeignKey("notifications.id"), nullable=False)
-    is_read: Mapped[bool] = mapped_column(nullable=False)
-    read_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    is_read: Mapped[bool] = mapped_column(nullable=False, default=False)
+    read_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
 
-    # notification: Mapped["Notification"] = relationship(back_populates="recipients")
+    notification: Mapped["Notification"] = relationship(back_populates="recipients")
     # user: Mapped["User"] = relationship(back_populates="notification_recipients")
 

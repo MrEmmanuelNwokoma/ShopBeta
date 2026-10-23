@@ -75,7 +75,7 @@ class StoreProductService:
 
             existing_sp = existing_map.get(product.id)
             new_price = enriched["price"]
-            
+    
 
             if existing_sp:
                 if existing_sp.price != new_price:
@@ -117,11 +117,16 @@ class StoreProductService:
 
         return newly_created + store_products_to_update
           
-    async def update_product_price(self, store_product_id: str, current_price: Decimal):
-        updated_price = await self.uow_factory.store_product_repo.update(id=store_product_id, data={"price": current_price})
-        await self.price_alert.monitor_alert(store_product_id)
-        return updated_price
-         
+    async def update_product_price(self, store_product_ids: list[str], target_price: Decimal):
+        async with self.uow_factory:
+            updated_prices = []
+            for store_product_id in store_product_ids:
+                updated_price = await self.uow_factory.store_product_repo.update(id=store_product_id, data={"price": target_price})
+                print(f"Updated price for store_product_id {store_product_id} to {target_price}")
+                await self.price_alert.monitor_alert(store_product_id)
+                updated_prices.append(updated_price)
+            return updated_prices
+
     async def get_store_product(self, store_product_id: str):
         store_product = await self.uow_factory.store_product_repo.get_by_id(store_product_id)
         return store_product

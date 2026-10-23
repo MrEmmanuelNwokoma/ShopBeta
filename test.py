@@ -1,7 +1,7 @@
 from src.storage import db
 from sqlalchemy.ext.asyncio import create_async_engine
 import asyncio
-from src.models.user import User
+from src.models.notification_recipient import NotificationRecipient
 
 
 
@@ -19,12 +19,12 @@ async def main():
     engine = create_async_engine(DB_URL, echo=False)
  
     async with engine.begin() as conn:
-        await conn.run_sync(User.__table__.drop)
+        await conn.run_sync(NotificationRecipient.__table__.drop)
  
     print("User table dropped")
  
     async with engine.begin() as conn:
-        await conn.run_sync(User.__table__.create)
+        await conn.run_sync(NotificationRecipient.__table__.create)
  
     print("User table recreated")
  

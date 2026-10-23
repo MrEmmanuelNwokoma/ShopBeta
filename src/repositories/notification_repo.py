@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Session
 from src.models.notification import Notification
 from src.schemas.notification import CreateNotification
-from src.repositories.sync_base import SyncBaseRepository
+from src.repositories.base import BaseRepository
 
-class SyncNotificationRepository(SyncBaseRepository[Notification]):
+class NotificationRepository(BaseRepository[Notification]):
     def __init__(self, session: Session):
         super().__init__(Notification, session)
     

@@ -13,6 +13,9 @@ from src.api.v1.routes.favorite import favorite_router
 from src.api.v1.routes.category import category_router
 from src.api.v1.routes.product import product_router
 from src.api.v1.routes.store import store_router
+from src.api.v1.routes.store_product import store_product_router
+from src.api.v1.routes.notification_recipients import notification_recipient_router
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -63,3 +66,7 @@ app.include_router(category_router)
 app.include_router(product_router)
 
 app.include_router(store_router)
+
+app.include_router(store_product_router)
+
+app.include_router(notification_recipient_router)

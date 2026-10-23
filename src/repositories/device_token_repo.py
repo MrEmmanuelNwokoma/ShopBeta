@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from src.repositories.base import BaseRepository
 from src.models.device_tokens import DeviceToken
 from src.schemas.device_token_schema import AddDeviceToken
@@ -18,3 +18,18 @@ class DeviceTokenRepository(BaseRepository[DeviceToken]):
         stmt = select(self.model).where(self.model.user_id == user_id)
         result = await self.session.execute(stmt)
         return result.scalars().all()
+
+    async def get_devices(self, user_ids: list[str]):
+        stmt = select(self.model).where(self.model.user_id.in_(user_ids))
+        result = await self.session.execute(stmt)
+        return result.scalars().all()
+
+
+    async def delete_by_tokens(self, tokens: list[str]) -> int:
+        result = await self.session.execute(
+            delete(self.model).where(self.model.token.in_(tokens))
+        )
+        return result.rowcount
+    
+
+    

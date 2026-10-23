@@ -20,7 +20,8 @@ celery_app.conf.update(
     include=[
         "src.tasks.notification_tasks",
         "src.tasks.email_task",
-        "src.tasks.scrape_store_product"
+        "src.tasks.scrape_store_product",
+        "src.tasks.notification_tasks",
     ],
     # beat_schedule={
     #     "scrape_jumia_products":{
@@ -28,6 +29,5 @@ celery_app.conf.update(
     #         "schedule": crontab(minute="*/30")
     #     }
     # }
-
 )
 

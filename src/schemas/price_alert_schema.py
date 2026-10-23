@@ -27,6 +27,7 @@ class ReadPriceAlert(BasePriceAlert):
     store_product_id: str
     store_product_name: str
     store_name: str
+    direction: str
 
    
 class UpdatePriceAlert(BasePriceAlert):

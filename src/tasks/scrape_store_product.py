@@ -34,4 +34,7 @@ def add_product_to_store(self):
                 await scrape_service.add_store_products(konga_scraper, "Konga", config.KONGA_URL)
 
     
-    asyncio.run(_run())
+    try:
+        asyncio.run(_run())
+    except Exception as e:
+        raise self.retry(exc=e, countdown=5)

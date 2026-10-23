@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey
+from decimal import Decimal
 from typing import TYPE_CHECKING
 from src.models.base import Basemodel, Base
 
@@ -20,6 +21,7 @@ class Product(Basemodel, Base):
     brand_id: Mapped[str] = mapped_column(ForeignKey("brands.id"), nullable=False)
     model: Mapped[str] = mapped_column(nullable=False)
     is_deleted: Mapped[bool] = mapped_column(nullable=False, default=False)
+    
 
 
     

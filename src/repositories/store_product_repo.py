@@ -2,6 +2,7 @@ from sqlalchemy import select, update
 from sqlalchemy.orm import selectinload, joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.models.store_product import StoreProduct
+from src.models.product import Product
 from src.repositories.base import BaseRepository
 
 class StoreProductRepository(BaseRepository[StoreProduct]):
@@ -22,7 +23,22 @@ class StoreProductRepository(BaseRepository[StoreProduct]):
         )
         )
         result = await self.session.execute(stmt)
-        return result.scalars().all
+        return result.scalars().one_or_none()
+
+    async def get_store_product_by_id(self, store_product_id: str):
+        stmt = (
+            select(self.model)
+            .options(
+                selectinload(self.model.store_product_images),
+                joinedload(self.model.store),
+                # Fix: Chain using the relationship attribute on the product model, or string path
+                joinedload(self.model.product).joinedload(Product.brand) # assuming Product model is imported
+            )
+            .where(self.model.id == store_product_id)
+        )
+        result = await self.session.execute(stmt)
+        # If you want a single record, use scalar_one_or_none() instead of scalars().all()
+        return result.scalars().first()
 
     async def get_by_store_and_product_ids(self, store_id: str, product_ids: list[str]):
         stmt = select(self.model).where(
