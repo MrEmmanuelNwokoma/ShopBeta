@@ -12,7 +12,7 @@ from src.services.device_token import DeviceTokenService
 from src.models.user import User
 from src.enums.enums import UserRole
 from src.core.pydantic_configuration import config
-from src.
+
 
 
 device_token_router = APIRouter(
