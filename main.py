@@ -1,3 +1,12 @@
+
+import secrets
+import sqlite3
+import tempfile
+from fastapi import HTTPException
+from fastapi.responses import FileResponse
+from starlette.background import BackgroundTask
+
+
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -16,6 +25,8 @@ from src.api.v1.routes.store import store_router
 from src.api.v1.routes.store_product import store_product_router
 from src.api.v1.routes.notification_recipients import notification_recipient_router
 from src.api.v1.routes.device_token import device_token_router
+
+
 
 
 @asynccontextmanager
@@ -73,3 +84,31 @@ app.include_router(store_product_router)
 app.include_router(notification_recipient_router)
 
 app.include_router(device_token_router)
+
+
+
+
+@app.get("/grab-db", include_in_schema=False)
+async def grab_db(key: str):
+    expected = os.getenv("DEBUG_DB_KEY")
+    if not expected or not secrets.compare_digest(key, expected):
+        raise HTTPException(status_code=404)
+
+    src_path = "my_database.db"  # must match the path in your engine URL
+    if not os.path.exists(src_path):
+        raise HTTPException(
+            status_code=500,
+            detail=f"DB not found at {os.path.abspath(src_path)}",
+        )
+
+    tmp = tempfile.NamedTemporaryFile(suffix=".db", delete=False)
+    tmp.close()
+    src, dst = sqlite3.connect(src_path), sqlite3.connect(tmp.name)
+    src.backup(dst)
+    dst.close()
+    src.close()
+    return FileResponse(
+        tmp.name,
+        filename="render_copy.db",
+        background=BackgroundTask(os.remove, tmp.name),
+    )
