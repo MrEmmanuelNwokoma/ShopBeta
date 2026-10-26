@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import select, update
+from datetime import datetime, timezone
 from sqlalchemy.orm import joinedload
 from src.models.notification_recipient import NotificationRecipient
 
@@ -27,3 +28,15 @@ class NotificationRecipientRepository(BaseRepository[NotificationRecipient]):
         )
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
+
+    async def mark_all_as_read(self, user_id: str) -> int:
+        stmt = (
+            update(NotificationRecipient)
+            .where(
+                NotificationRecipient.recipient_id == user_id,
+                NotificationRecipient.is_read.is_(False),
+            )
+            .values(is_read=True, read_at=datetime.now(timezone.utc))
+        )
+        result = await self.session.execute(stmt)
+        return result.rowcount

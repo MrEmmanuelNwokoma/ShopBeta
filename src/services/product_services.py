@@ -136,3 +136,12 @@ class ProductService:
                 "message": "Products successfully retrieved",
                 "data": store_products
             }
+        
+    async def search_products(self, query: str):
+        async with self.uow_factory:
+            products = await self.uow_factory.product_repo.search_products(query)
+            return {
+                "status": "success",
+                "message": "Products successfully retrieved",
+                "data": [ReadProduct.model_validate(product) for product in products]
+            }

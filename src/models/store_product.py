@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, Numeric
 from decimal import Decimal
 from typing import TYPE_CHECKING
 from src.models.base import Basemodel, Base
@@ -20,7 +20,7 @@ class StoreProduct(Basemodel, Base):
     store_id: Mapped[str] = mapped_column(ForeignKey("stores.id"), nullable=False)
     product_id: Mapped[str] = mapped_column(ForeignKey("products.id"), nullable=False)
     name: Mapped[str] = mapped_column(nullable=False)
-    price: Mapped[Decimal] = mapped_column(nullable=False)
+    price: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=False)
     currency: Mapped[str] = mapped_column(String(3), nullable=False)
     product_url: Mapped[str] = mapped_column(nullable=False)
     

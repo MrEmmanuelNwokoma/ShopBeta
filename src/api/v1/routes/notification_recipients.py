@@ -20,7 +20,15 @@ async def get_user_notification(
     response = await notification_recipient_service.get_user_notification(notification_recipient_id)
     return response
 
-@notification_recipient_router.put("/{notification_recipient_id}/mark_as_read")
+@notification_recipient_router.patch("/read_all")
+async def mark_all_notifications_as_read(
+    current_user: User = Depends(get_current_user),
+    notification_recipient_service: NotificationRecipientService = Depends(get_notification_recipient_service)
+):
+    response = await notification_recipient_service.mark_all_as_read(current_user.id)
+    return response
+
+@notification_recipient_router.patch("/{notification_recipient_id}/read")
 async def mark_notification_as_read(
     notification_recipient_id: str,
     current_user: User = Depends(get_current_user),

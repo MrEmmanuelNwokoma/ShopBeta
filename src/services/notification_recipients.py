@@ -47,3 +47,8 @@ class NotificationRecipientService:
             }
             await uow.notification_recipient_repo.update(notification_recipient_id, data)
             return notification
+
+    async def mark_all_as_read(self, user_id: str):
+        async with self.uow_factory as uow:
+            notifications = await uow.notification_recipient_repo.mark_all_as_read(user_id)
+            return notifications

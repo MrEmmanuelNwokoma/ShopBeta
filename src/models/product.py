@@ -1,5 +1,7 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, Index, Computed
+from sqlalchemy.dialects.postgresql import TSVECTOR
+
 from decimal import Decimal
 from typing import TYPE_CHECKING
 from src.models.base import Basemodel, Base
@@ -14,6 +16,10 @@ if TYPE_CHECKING:
 
 class Product(Basemodel, Base):
     __tablename__="products"
+    __table_args__ = (
+        Index('ix_products_search_vector',
+              'search_vector', postgresql_using='gin'),
+    )
     
     category_id: Mapped[str] = mapped_column(ForeignKey("categories.id"))
     ram: Mapped[str] = mapped_column(nullable=True)
@@ -21,6 +27,23 @@ class Product(Basemodel, Base):
     brand_id: Mapped[str] = mapped_column(ForeignKey("brands.id"), nullable=False)
     model: Mapped[str] = mapped_column(nullable=False)
     is_deleted: Mapped[bool] = mapped_column(nullable=False, default=False)
+
+    if Base.metadata.info.get("bind") and Base.metadata.info["bind"].dialect.name == "postgresql":
+        search_vector: Mapped[str] = mapped_column(
+            TSVECTOR,
+            nullable=False,
+            server_default=Computed(
+                "to_tsvector('english', "
+                "coalesce(ram, '') || ' ' || "
+                "coalesce(storage, '') || ' ' || "
+                "coalesce(model, '') || ' ' || "
+                ")",
+                persisted=True
+            ),
+        )
+    else:
+        # SQLite fallback
+        search_vector: Mapped[str] = mapped_column(nullable=True)
     
 
 

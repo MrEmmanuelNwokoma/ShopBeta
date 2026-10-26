@@ -1,8 +1,9 @@
 import logging
+import re
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload, joinedload
 from thefuzz import fuzz
-from sqlalchemy import select, delete, func
+from sqlalchemy import select, delete, func, or_
 from src.repositories.base import BaseRepository
 from src.models.product import Product
 from src.models.store_product import StoreProduct
@@ -186,4 +187,40 @@ class ProductRepository(BaseRepository[Product]):
             return None
         
         return product
-        
+    
+
+    async def search_products(self, query: str, limit: int = 10):
+        stmt = (
+            select(Product)
+            .where(Product.is_deleted.is_(False))
+            .options(
+                joinedload(Product.brand),
+                selectinload(Product.stores).selectinload(StoreProduct.store),
+                selectinload(Product.stores).selectinload(StoreProduct.store_product_images),
+            )
+        )
+
+        # keep only letters/digits, drop operators and stray punctuation
+        words = re.findall(r"\w+", query.lower())
+        if not words:
+            return []
+
+        if self.session.bind.dialect.name == "postgresql":
+            tsquery = func.to_tsquery('english', " | ".join(words))
+            stmt = stmt.where(
+                Product.search_vector.op('@@')(tsquery)
+            ).order_by(
+                func.ts_rank_cd(Product.search_vector, tsquery).desc()
+            )
+        else:
+            conditions = []
+            for w in words:
+                conditions += [
+                    Product.model.ilike(f"%{w}%"),
+                    Product.ram.ilike(f"%{w}%"),
+                    Product.storage.ilike(f"%{w}%"),
+                ]
+            stmt = stmt.where(or_(*conditions))
+
+        result = await self.session.execute(stmt.limit(limit))
+        return result.scalars().all()

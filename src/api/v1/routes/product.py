@@ -10,6 +10,14 @@ from src.schemas.store_product import ReadStoreProduct
 product_router = APIRouter(prefix="/api/v1/products")
 
 
+@product_router.get("/search")
+async def search_products(
+    query: str,
+    product_service: ProductService = Depends(get_product_service)
+):
+    response = await product_service.search_products(query)
+    return response
+
 @product_router.get("/batch", response_model=ResponseWrapper[list[ReadProduct]])
 async def get_multiple_products(
     product_ids: list[str],
@@ -44,3 +52,4 @@ async def compare_stores(
 ):
     response = await product_service.compare_stores(product_id)
     return response
+
