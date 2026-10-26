@@ -22,6 +22,7 @@ class Product(Basemodel, Base):
     )
     
     category_id: Mapped[str] = mapped_column(ForeignKey("categories.id"))
+    brand_name: Mapped[str] = mapped_column(nullable=False)
     ram: Mapped[str] = mapped_column(nullable=True)
     storage: Mapped[str] = mapped_column(nullable=True)
     brand_id: Mapped[str] = mapped_column(ForeignKey("brands.id"), nullable=False)
@@ -34,11 +35,12 @@ class Product(Basemodel, Base):
             nullable=False,
             server_default=Computed(
                 "to_tsvector('english', "
+                "coalesce(brand_name, '') || ' ' || "
                 "coalesce(ram, '') || ' ' || "
                 "coalesce(storage, '') || ' ' || "
-                "coalesce(model, '') || ' ' || "
+                "coalesce(model, '')"
                 ")",
-                persisted=True
+                persisted=True,
             ),
         )
     else:
